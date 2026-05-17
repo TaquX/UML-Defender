@@ -20,24 +20,25 @@
   --gold:#ffd700;
   --dim:#1a4060;
   --txt:#7ab8d8;
+  --coin:#ffd700;
 }
 
 html, body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'Share Tech Mono',monospace; }
 
 canvas { position:fixed; top:0; left:0; z-index:0; }
 
-/* ─── LAYER SYSTEM ─── */
+/* LAYER SYSTEM */
 #ui { position:fixed; inset:0; z-index:10; pointer-events:none; }
 .layer { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:all; }
 .layer.hidden { display:none !important; }
 
-/* ─── SCANLINES ─── */
+/* SCANLINES */
 #ui::after {
   content:''; position:absolute; inset:0; pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
 }
 
-/* ─── START ─── */
+/* START */
 #layer-start { background:radial-gradient(ellipse 80% 70% at 50% 30%, #030e1f 0%, #000 100%); }
 
 .logo-uml {
@@ -61,7 +62,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
   color:#0a3a5a; letter-spacing:.3em; margin-bottom:40px;
 }
 
-/* ─── DIFF SELECTOR ─── */
+/* DIFF SELECTOR */
 .diff-row { display:flex; gap:10px; margin-bottom:16px; }
 .diff-btn {
   flex:1; padding:11px 18px; background:transparent; border:1px solid var(--dim);
@@ -74,7 +75,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 .diff-btn.sel-hard   { border-color:var(--amb); color:var(--amb); background:rgba(255,140,0,.05); }
 .diff-btn.sel-insane { border-color:var(--red); color:var(--red); background:rgba(255,34,68,.05); }
 
-/* ─── CARD / MENU BOX ─── */
+/* CARD / MENU BOX */
 .card {
   background:rgba(2,12,26,.9); border:1px solid var(--border);
   padding:30px 40px; min-width:340px; position:relative;
@@ -85,7 +86,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
   color:var(--dim); background:rgba(2,12,26,1); padding:0 8px;
 }
 
-/* ─── BUTTONS ─── */
+/* BUTTONS */
 .btn {
   width:100%; padding:13px 20px; background:transparent; border:1px solid var(--dim);
   color:var(--txt); font-family:'Orbitron',monospace; font-size:12px; font-weight:700;
@@ -101,7 +102,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 .btn.warn { border-color:var(--red); color:var(--red); }
 .btn.warn:hover { background:rgba(255,34,68,.08); }
 
-/* ─── HUD ─── */
+/* HUD */
 #hud {
   position:fixed; top:0; left:0; right:0; height:54px; z-index:20;
   background:rgba(0,0,0,.92); border-bottom:1px solid #050e1c;
@@ -118,7 +119,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 .heart { font-size:15px; color:var(--red); filter:drop-shadow(0 0 4px var(--red)); transition:all .2s; }
 .heart.off { color:#1a0808; filter:none; }
 
-/* ─── BOTTOM BAR ─── */
+/* BOTTOM BAR */
 #bot-bar {
   position:fixed; bottom:0; left:0; right:0; height:40px; z-index:20;
   background:rgba(0,0,0,.92); border-top:1px solid #050e1c;
@@ -129,21 +130,21 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 .pbar { width:140px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
 .pbar-fill { height:100%; background:linear-gradient(90deg,var(--acc),var(--grn)); border-radius:2px; transition:width .3s; }
 
-/* ─── UPGRADE ICONS ─── */
+/* UPGRADE ICONS */
 #upg-strip {
   position:fixed; left:10px; top:62px; z-index:20;
   display:flex; flex-direction:column; gap:5px; display:none;
 }
 .upg-icon-el { font-size:16px; opacity:.75; cursor:default; }
 
-/* ─── PAUSE ─── */
+/* PAUSE */
 #layer-pause { background:rgba(0,0,0,.85); backdrop-filter:blur(6px); }
 #layer-pause h2 {
   font-family:'Orbitron',monospace; font-size:clamp(30px,5vw,54px);
   color:var(--acc); letter-spacing:.3em; text-shadow:0 0 40px var(--acc); margin-bottom:32px;
 }
 
-/* ─── ANNOUNCE ─── */
+/* ANNOUNCE */
 #layer-announce { background:transparent; pointer-events:none; }
 .ann-box {
   text-align:center; padding:28px 56px; border:1px solid currentColor;
@@ -153,8 +154,52 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 #ann-lv { font-family:'Orbitron',monospace; font-size:clamp(34px,7vw,72px); font-weight:900; letter-spacing:.15em; }
 #ann-name { font-family:'VT323',monospace; font-size:clamp(22px,4vw,40px); letter-spacing:.25em; margin-top:-4px; }
 #ann-desc { font-size:11px; color:#3a7090; letter-spacing:.12em; margin-top:8px; }
+#ann-inherit { font-size:10px; color:var(--gold); letter-spacing:.15em; margin-top:4px; }
 
-/* ─── UPGRADE SCREEN ─── */
+/* BRANCH CHOICE */
+#layer-branch { background:rgba(0,0,0,.94); }
+#layer-branch h2 {
+  font-family:'Orbitron',monospace; font-size:clamp(18px,3vw,28px);
+  color:var(--gold); letter-spacing:.2em; text-shadow:0 0 24px var(--gold); margin-bottom:4px;
+}
+.branch-sub { font-size:10px; color:#2a5a2a; letter-spacing:.18em; margin-bottom:24px; }
+.branch-grid { display:flex; gap:20px; max-width:700px; width:100%; justify-content:center; }
+.branch-card {
+  flex:1; max-width:320px; border:1px solid var(--border); background:rgba(2,10,22,.95);
+  padding:24px 20px; cursor:pointer; transition:all .18s; position:relative; text-align:center;
+}
+.branch-card:hover { border-color:var(--gold); box-shadow:0 0 30px rgba(255,215,0,.15); transform:translateY(-4px); }
+.branch-card .bc-icon { font-size:36px; margin-bottom:10px; display:block; }
+.branch-card .bc-name { font-family:'Orbitron',monospace; font-size:14px; color:var(--gold); letter-spacing:.12em; margin-bottom:6px; }
+.branch-card .bc-stereo { font-size:9px; color:var(--acc); letter-spacing:.1em; margin-bottom:8px; }
+.branch-card .bc-perk { font-size:11px; color:var(--grn); margin-top:10px; padding:8px; border:1px solid rgba(0,255,157,.2); background:rgba(0,255,157,.04); }
+.branch-card .bc-members { font-size:9px; color:#4a7a9a; line-height:1.8; margin-top:8px; text-align:left; }
+
+/* SHOP */
+#layer-shop { background:rgba(0,0,0,.94); }
+#layer-shop h2 {
+  font-family:'Orbitron',monospace; font-size:clamp(18px,3vw,28px);
+  color:var(--coin); letter-spacing:.2em; text-shadow:0 0 24px var(--coin); margin-bottom:4px;
+}
+.shop-sub { font-size:11px; color:var(--coin); letter-spacing:.15em; margin-bottom:20px; }
+.shop-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:680px; width:100%; }
+.shop-card {
+  border:1px solid var(--border); background:rgba(2,10,22,.95);
+  padding:18px 14px; cursor:pointer; transition:all .18s; position:relative;
+}
+.shop-card:not(.locked):not(.maxed):hover { border-color:var(--coin); box-shadow:0 0 20px rgba(255,215,0,.12); }
+.shop-card .uc-icon { font-size:24px; margin-bottom:8px; display:block; }
+.shop-card .uc-name { font-family:'Orbitron',monospace; font-size:10px; color:var(--coin); letter-spacing:.12em; margin-bottom:5px; }
+.shop-card .uc-lvl { font-size:9px; color:#2a5a2a; }
+.shop-card .uc-desc { font-size:9px; color:#2a5070; line-height:1.6; margin-top:5px; }
+.shop-card .uc-cost { font-size:11px; color:var(--coin); margin-top:8px; font-weight:bold; }
+.shop-card.maxed { border-color:#0d1f2a; cursor:default; opacity:.5; }
+.shop-card.maxed::after { content:'MAX'; position:absolute; top:6px; right:8px; font-size:8px; color:#1a3a5a; letter-spacing:.1em; }
+.shop-card.locked { border-color:#1a1a2a; cursor:not-allowed; opacity:.4; }
+.shop-skip { margin-top:16px; font-size:10px; color:#0a2a3a; cursor:pointer; letter-spacing:.15em; transition:color .15s; }
+.shop-skip:hover { color:var(--acc); }
+
+/* UPGRADE SCREEN (free upgrade after branch) */
 #layer-upgrade { background:rgba(0,0,0,.94); }
 #layer-upgrade h2 {
   font-family:'Orbitron',monospace; font-size:clamp(18px,3vw,32px);
@@ -176,19 +221,19 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 .upg-skip { margin-top:16px; font-size:10px; color:#0a2a3a; cursor:pointer; letter-spacing:.15em; transition:color .15s; }
 .upg-skip:hover { color:var(--acc); }
 
-/* ─── GAME OVER / WIN ─── */
+/* GAME OVER / WIN */
 #layer-over { background:rgba(0,0,0,.96); }
 #over-title { font-family:'Orbitron',monospace; font-size:clamp(36px,8vw,90px); font-weight:900; letter-spacing:.12em; margin-bottom:12px; }
 #over-stats { font-size:12px; color:#2a5a6a; letter-spacing:.12em; line-height:2.2; text-align:center; margin-bottom:6px; }
 #over-score { font-family:'Orbitron',monospace; font-size:clamp(20px,4vw,44px); color:var(--grn); text-shadow:0 0 30px var(--grn); margin:18px 0 28px; }
 
-/* ─── HOWTO ─── */
+/* HOWTO */
 #layer-howto { background:rgba(0,0,0,.97); }
 #layer-howto .hw-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:540px; margin:16px 0 24px; }
 #layer-howto .hw-item { font-size:11px; color:#2a5a6a; line-height:1.8; }
 #layer-howto .hw-item span { display:block; font-family:'Orbitron',monospace; font-size:9px; color:var(--acc); letter-spacing:.15em; margin-bottom:4px; }
 
-/* ─── FLASH / TOAST ─── */
+/* FLASH / TOAST */
 #flash { position:fixed; inset:0; z-index:30; pointer-events:none; opacity:0; transition:opacity .08s; }
 #toast {
   position:fixed; top:62px; left:50%; transform:translateX(-50%);
@@ -197,7 +242,16 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
   opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap;
 }
 
-/* ─── MISC ─── */
+/* PERK TOAST */
+#perk-toast {
+  position:fixed; top:80px; left:50%; transform:translateX(-50%);
+  font-family:'Orbitron',monospace; font-size:13px; letter-spacing:.12em;
+  color:var(--grn); text-shadow:0 0 20px var(--grn); z-index:25;
+  opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap;
+  padding:8px 20px; border:1px solid rgba(0,255,157,.3); background:rgba(0,0,0,.8);
+}
+
+/* MISC */
 .sep { width:100%; height:1px; background:var(--border); margin:12px 0; }
 .sec-lbl { font-size:8px; color:var(--dim); letter-spacing:.25em; margin-bottom:8px; display:block; }
 </style>
@@ -207,23 +261,24 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 <canvas id="c"></canvas>
 <div id="flash"></div>
 <div id="toast"></div>
+<div id="perk-toast"></div>
 
 <!-- HUD -->
 <div id="hud">
   <div class="hud-cell"><div class="hud-lbl">LEVEL</div><div class="hud-val o" id="h-lv">1</div></div>
-  <div class="hud-cell"><div class="hud-lbl">CLASS</div><div class="hud-val" id="h-cls">—</div></div>
+  <div class="hud-cell"><div class="hud-lbl">CLASS</div><div class="hud-val" id="h-cls">---</div></div>
   <div class="hud-cell"><div class="hud-lbl">SCORE</div><div class="hud-val g" id="h-sc">0</div></div>
+  <div class="hud-cell"><div class="hud-lbl">COINS</div><div class="hud-val" style="color:var(--coin);" id="h-coins">0</div></div>
   <div class="hud-cell">
     <div class="hud-lbl">WEAPON</div>
     <div style="display:flex;gap:6px;align-items:center;">
       <span id="h-wico" style="font-size:16px;">◈</span>
-      <div><div class="hud-val" style="font-size:11px;" id="h-wname">PULSE</div><div style="font-size:9px;color:#1a5a2a;" id="h-ammo"></div></div>
+      <div><div class="hud-val" style="font-size:11px;" id="h-wname">PULSE</div></div>
     </div>
   </div>
-  <div class="hud-cell"><div class="hud-lbl">SPEED</div><div class="hud-val" id="h-spd">1.0×</div></div>
   <div class="hud-cell" style="border-left:1px solid #0a2540;padding-left:14px;">
-    <div style="font-size:8px;color:#00d4ff;letter-spacing:.1em;">🔵 BLUE = YOURS</div>
-    <div style="font-size:8px;color:#ff2244;letter-spacing:.1em;margin-top:2px;">🔴 RED = SHOOT</div>
+    <div style="font-size:8px;color:#00d4ff;letter-spacing:.1em;">★ BLUE = YOURS</div>
+    <div style="font-size:8px;color:#ff2244;letter-spacing:.1em;margin-top:2px;">☠ RED = SHOOT</div>
   </div>
   <div class="hud-cell"><div class="hud-lbl">LIVES</div><div class="hearts" id="h-hearts"></div></div>
 </div>
@@ -232,9 +287,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
 <div id="bot-bar">
   <span>KILLS <span class="bot-val" id="b-kills">0/0</span></span>
   <span>PROGRESS <div class="pbar"><div class="pbar-fill" id="b-pbar" style="width:0%"></div></div></span>
-  <span>ACCURACY <span class="bot-val" id="b-acc">-</span></span>
-  <span style="color:#ff2244;">🔴 SHOOT RED</span>
-  <span style="color:#00d4ff;">🔵 LET BLUE PASS</span>
+  <span>ACCURACY <span class="bot-val" id="b-acc">---</span></span>
   <span id="b-nuke" style="display:none;color:#ff4400;">☢ NUKE [N]</span>
 </div>
 
@@ -262,7 +315,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
       <button class="btn primary" onclick="startGame()">▶  INITIALIZE SYSTEM</button>
       <button class="btn" onclick="showLayer('howto')">?  HOW TO PLAY</button>
     </div>
-    <div style="margin-top:18px;font-size:9px;color:#0a2030;letter-spacing:.2em;">← → MOVE &nbsp;·&nbsp; SPACE SHOOT &nbsp;·&nbsp; N NUKE &nbsp;·&nbsp; ESC PAUSE</div>
+    <div style="margin-top:18px;font-size:9px;color:#0a2030;letter-spacing:.2em;">← → MOVE · SPACE SHOOT · N NUKE · ESC PAUSE</div>
   </div>
 
   <!-- HOW TO PLAY -->
@@ -271,11 +324,12 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
       <div class="card-label">PROTOCOL</div>
       <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--acc);letter-spacing:.2em;margin-bottom:16px;">HOW TO PLAY</div>
       <div class="hw-grid">
-        <div class="hw-item"><span>YOU ARE</span>A UML class node. Color-coded members fall from above.</div>
-        <div class="hw-item"><span>🔴 RED = SHOOT</span>Members that <b style="color:#ff2244">DON'T BELONG</b> to your class are marked red with a ☠ skull. Shoot them!</div>
-        <div class="hw-item"><span>🔵 BLUE = LET PASS</span>Members that <b style="color:#00d4ff">BELONG</b> to your class are marked blue with a ★ star. Let them dock safely.</div>
-        <div class="hw-item"><span>8 LEVELS</span>Each level is a new UML class. The reference panel fades as you progress. By level 8 you're on your own!</div>
-        <div class="hw-item"><span>UPGRADES</span>Between levels choose upgrades: speed, weapons, shields, laser sight, nukes and more.</div>
+        <div class="hw-item"><span>YOU ARE</span>A UML class node. Members fall from above. Learn their attributes and methods.</div>
+        <div class="hw-item"><span>☠ RED = SHOOT</span>Members that DON'T BELONG to your class are red. Shoot them!</div>
+        <div class="hw-item"><span>★ BLUE = LET PASS</span>Members that BELONG to your class are blue. Let them dock safely.</div>
+        <div class="hw-item"><span>CLASS TREE</span>Beat a parent class, then choose a child specialization. Each child grants a unique perk!</div>
+        <div class="hw-item"><span>COINS</span>Earn coins from kills. Spend them in the shop after every 2 levels.</div>
+        <div class="hw-item"><span>8 LEVELS</span>4 parent classes chosen randomly, each branching into your chosen child. Every run is different!</div>
       </div>
       <button class="btn primary" onclick="showLayer('start')">◈  BACK</button>
     </div>
@@ -298,15 +352,31 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
       <div id="ann-lv">LEVEL 1</div>
       <div id="ann-name">Animal</div>
       <div id="ann-desc">Abstract base of all living creatures</div>
+      <div id="ann-inherit"></div>
     </div>
   </div>
 
-  <!-- UPGRADE -->
+  <!-- BRANCH CHOICE -->
+  <div id="layer-branch" class="layer hidden">
+    <h2>◈ SPECIALIZATION</h2>
+    <div class="branch-sub" id="branch-sub">CHOOSE YOUR PATH</div>
+    <div class="branch-grid" id="branch-grid"></div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="layer-shop" class="layer hidden">
+    <h2>⬡ SHOP</h2>
+    <div class="shop-sub" id="shop-coins">COINS: 0</div>
+    <div class="shop-grid" id="shop-grid"></div>
+    <div class="shop-skip" onclick="skipShop()">[ continue without buying ]</div>
+  </div>
+
+  <!-- UPGRADE (free after branch levels) -->
   <div id="layer-upgrade" class="layer hidden">
     <h2>◈ ENHANCEMENT</h2>
     <div class="upg-sub" id="upg-sub">LEVEL COMPLETE - SELECT AN UPGRADE</div>
     <div class="upg-grid" id="upg-grid"></div>
-    <div class="upg-skip" onclick="skipUpgrade()">[ skip - continue without upgrade ]</div>
+    <div class="upg-skip" onclick="skipUpgrade()">[ skip ]</div>
   </div>
 
   <!-- GAME OVER / WIN -->
@@ -320,7 +390,7 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
     </div>
   </div>
 
-</div><!-- /ui -->
+</div>
 
 <script>
 'use strict';
@@ -335,22 +405,9 @@ resize();
 window.addEventListener('resize', resize);
 
 // ══════════════════════════════════════════
-// LEVEL DATA
+// CLASS TREE: 12 base classes, each with 2 children
 // ══════════════════════════════════════════
-// ── LEVEL THEMES ─────────────────────────────────────────────────────
-// Each level has a unique color palette applied to background/HUD/stars
-const LEVEL_THEMES = [
-  { bg:'#01060f', grid:'rgba(0,50,100,.06)',  star:'80,160,220' },  // L1 cool blue
-  { bg:'#0a0610', grid:'rgba(60,0,100,.07)', star:'160,80,220' },  // L2 deep purple
-  { bg:'#0a0400', grid:'rgba(100,40,0,.07)', star:'220,120,40' },  // L3 amber
-  { bg:'#000a06', grid:'rgba(0,80,30,.07)',  star:'60,200,100' },  // L4 matrix green
-  { bg:'#0a0000', grid:'rgba(100,0,0,.06)',  star:'220,60,60' },   // L5 crimson
-  { bg:'#06000a', grid:'rgba(80,0,80,.06)',  star:'180,60,180' },  // L6 magenta
-  { bg:'#0a0800', grid:'rgba(100,80,0,.06)', star:'220,200,40' },  // L7 gold
-  { bg:'#050008', grid:'rgba(60,0,80,.07)',  star:'140,40,200' },  // L8 violet
-];
-
-const LEVELS = [
+const CLASS_TREE = [
   {
     name:'Animal', color:'#00d4ff', stereo:'<<abstract>>',
     desc:'Base class of all living creatures',
@@ -358,30 +415,23 @@ const LEVELS = [
     bad:['- studentId: int','+ enroll(): void','- salary: double','+ clockIn(): void',
          '- isbn: String','+ checkout(): void','- plateNo: String','+ refuel(): void',
          '- balance: float','+ withdraw(): bool','- resolution: int','+ capture(): void',
-         '- floor: int','+ goUp(): void','- paperCount: int','+ print(): void',
-         '+ scan(): void','- ipAddress: String','+ connect(): void']
-  },
-  {
-    name:'BankAccount', color:'#f0a830', stereo:'',
-    desc:'Manages financial transactions',
-    own:['- accountId: int','- balance: double','- owner: String','+ deposit(amt): void',
-         '+ withdraw(amt): bool','+ getBalance(): double'],
-    bad:['- breed: String','+ bark(): void','- wingspan: float','+ fly(): void',
-         '- engineCC: int','+ accelerate(): void','- isbn: String','+ borrow(): void',
-         '- grade: char','+ submitAssignment(): void','- floor: int','+ goDown(): void',
-         '- seatNo: String','+ reserve(): void','- temp: float','+ setTemp(t): void',
-         '+ calibrate(): void','- reading: float','+ dismiss(): void']
-  },
-  {
-    name:'Student', color:'#c060ff', stereo:'',
-    desc:'Represents a university student',
-    own:['- studentId: int','- name: String','- gpa: float','- major: String',
-         '+ enroll(course): void','+ submitAssignment(): void','+ getGPA(): float'],
-    bad:['- balance: double','+ withdraw(): bool','- breed: String','+ fetch(): void',
-         '- salary: double','+ clockIn(): void','- plateNo: String','+ refuel(): void',
-         '- orderId: int','+ ship(): void','+ cancel(): void','- flightNo: String',
-         '+ board(): void','- cashReserve: double','+ dispenseCash(): void',
-         '- items: List','+ addItem(): void','+ calculateTotal(): double']
+         '- floor: int','+ goUp(): void','- paperCount: int','+ print(): void'],
+    children: [
+      {
+        name:'Dog', icon:'🐕', stereo:'extends Animal',
+        desc:'Loyal subclass of Animal',
+        own:['- breed: String','- isLoyal: bool','- weight: float',
+             '+ bark(): void','+ fetch(): void','+ makeSound(): void','+ sit(): void'],
+        perk:{ id:'dog_life', name:'+1 LIFE', desc:'+1 extra life', icon:'♥' },
+      },
+      {
+        name:'Cat', icon:'🐈', stereo:'extends Animal',
+        desc:'Independent feline subclass',
+        own:['- furColor: String','- isIndoor: bool','- lives: int',
+             '+ purr(): void','+ scratch(): void','+ makeSound(): void','+ climb(): void'],
+        perk:{ id:'cat_dodge', name:'DODGE CHANCE', desc:'15% chance to dodge imposter damage', icon:'💨' },
+      }
+    ]
   },
   {
     name:'Vehicle', color:'#ff6b35', stereo:'',
@@ -391,19 +441,49 @@ const LEVELS = [
     bad:['- gpa: float','+ enroll(): void','- isbn: String','+ checkout(): void',
          '- salary: double','+ promote(): void','- balance: double','+ deposit(): void',
          '- ingredients: List','+ cook(): void','- songs: List','+ shuffle(): void',
-         '- priority: int','+ snooze(): void','- message: String','+ dismiss(): void',
-         '+ addEvent(): void','- events: List']
+         '- priority: int','+ snooze(): void','- message: String','+ dismiss(): void'],
+    children: [
+      {
+        name:'Truck', icon:'🚛', stereo:'extends Vehicle',
+        desc:'Heavy-duty cargo vehicle',
+        own:['- cargoWeight: double','- axleCount: int','- hasTowbar: bool',
+             '+ loadCargo(w): void','+ unloadCargo(): void','+ honk(): void','+ tow(v): void'],
+        perk:{ id:'truck_hp', name:'+2 MAX HEALTH', desc:'+2 maximum lives (up to 7)', icon:'🛡' },
+      },
+      {
+        name:'Car', icon:'🚗', stereo:'extends Vehicle',
+        desc:'Passenger automobile',
+        own:['- seatCount: int','- trunkSize: float','- isElectric: bool',
+             '+ openTrunk(): void','+ park(): void','+ startEngine(): void','+ drift(): void'],
+        perk:{ id:'car_speed', name:'TURBO SPEED', desc:'+40% movement speed', icon:'⚡' },
+      }
+    ]
   },
   {
-    name:'Book', color:'#00ff9d', stereo:'',
-    desc:'A library catalog entity',
-    own:['- isbn: String','- title: String','- author: String','- pageCount: int',
-         '- available: bool','+ checkout(user): void','+ returnBook(): void','+ getInfo(): String'],
-    bad:['- plateNo: String','+ accelerate(): void','- health: int','+ attack(): void',
-         '+ defend(): void','- level: int','+ respawn(): void','- bandwidth: int',
-         '+ disconnect(): void','- inkLevel: float','+ scan(): void',
-         '- altitude: float','+ delay(min): void','- gate: String',
-         '- capacity: int','+ goUp(): void','+ goDown(): void']
+    name:'BankAccount', color:'#f0a830', stereo:'',
+    desc:'Manages financial transactions',
+    own:['- accountId: int','- balance: double','- owner: String','+ deposit(amt): void',
+         '+ withdraw(amt): bool','+ getBalance(): double'],
+    bad:['- breed: String','+ bark(): void','- wingspan: float','+ fly(): void',
+         '- engineCC: int','+ accelerate(): void','- isbn: String','+ borrow(): void',
+         '- grade: char','+ submitAssignment(): void','- floor: int','+ goDown(): void',
+         '- seatNo: String','+ reserve(): void','- temp: float','+ setTemp(t): void'],
+    children: [
+      {
+        name:'SavingsAccount', icon:'🏦', stereo:'extends BankAccount',
+        desc:'Interest-bearing savings account',
+        own:['- interestRate: float','- minBalance: double','- isActive: bool',
+             '+ addInterest(): void','+ setMinBalance(m): void','+ freeze(): void','+ unfreeze(): void'],
+        perk:{ id:'savings_coins', name:'PASSIVE INCOME', desc:'+5 coins per kill passively', icon:'💰' },
+      },
+      {
+        name:'CreditCard', icon:'💳', stereo:'extends BankAccount',
+        desc:'Credit line payment instrument',
+        own:['- creditLimit: double','- apr: float','- rewardPoints: int',
+             '+ charge(amt): bool','+ payBill(amt): void','+ redeemPoints(): void','+ reportLost(): void'],
+        perk:{ id:'credit_discount', name:'SHOP DISCOUNT', desc:'All shop items cost 30% less', icon:'🏷' },
+      }
+    ]
   },
   {
     name:'Employee', color:'#ff3c7e', stereo:'',
@@ -414,19 +494,75 @@ const LEVELS = [
     bad:['- isbn: String','+ returnBook(): void','- breed: String','+ fetch(): void',
          '- plateNo: String','+ brake(): void','- resolution: int','+ zoom(x): void',
          '+ capture(): void','- flash: bool','- servings: int','+ cook(): void',
-         '- prepTime: int','+ addIngredient(): void','- model: String',
-         '+ train(): void','+ reply(msg): String']
+         '- prepTime: int','+ addIngredient(): void','- model: String'],
+    children: [
+      {
+        name:'Manager', icon:'👔', stereo:'extends Employee',
+        desc:'Supervisory role in organization',
+        own:['- teamSize: int','- budget: double','- directReports: List',
+             '+ approveLeave(e): void','+ assignTask(t): void','+ reviewPerformance(): void','+ escalate(): void'],
+        perk:{ id:'manager_fire', name:'RAPID FIRE', desc:'+35% fire rate permanently', icon:'🔫' },
+      },
+      {
+        name:'Intern', icon:'📋', stereo:'extends Employee',
+        desc:'Temporary learning position',
+        own:['- university: String','- mentor: String','- weeksLeft: int',
+             '+ learnSkill(s): void','+ askQuestion(): void','+ submitReport(): void','+ getMentor(): String'],
+        perk:{ id:'intern_coins', name:'COIN BONUS', desc:'+50% coin drops from kills', icon:'🪙' },
+      }
+    ]
   },
   {
-    name:'Dog', color:'#ffd700', stereo:'extends Animal',
-    desc:'Loyal subclass of Animal',
-    own:['- breed: String','- isLoyal: bool','- weight: float',
-         '+ bark(): void','+ fetch(): void','+ makeSound(): void','+ sit(): void'],
-    bad:['- empId: int','+ clockOut(): void','- balance: double','+ getBalance(): double',
-         '- isbn: String','+ getInfo(): String','- flightNo: String','+ board(): void',
-         '- seatNo: String','+ cancel(): void','- price: double','+ reserve(): void',
-         '- timezone: String','+ addEvent(): void','- orderId: int','+ track(): String',
-         '+ ship(): void','- status: String']
+    name:'Student', color:'#c060ff', stereo:'',
+    desc:'Represents a university student',
+    own:['- studentId: int','- name: String','- gpa: float','- major: String',
+         '+ enroll(course): void','+ submitAssignment(): void','+ getGPA(): float'],
+    bad:['- balance: double','+ withdraw(): bool','- breed: String','+ fetch(): void',
+         '- salary: double','+ clockIn(): void','- plateNo: String','+ refuel(): void',
+         '- orderId: int','+ ship(): void','+ cancel(): void','- flightNo: String',
+         '+ board(): void','- cashReserve: double','+ dispenseCash(): void'],
+    children: [
+      {
+        name:'GradStudent', icon:'🎓', stereo:'extends Student',
+        desc:'Pursuing a graduate degree',
+        own:['- thesis: String','- advisor: String','- publications: int',
+             '+ publishPaper(): void','+ defend(): void','+ teachSection(): void','+ applyGrant(): void'],
+        perk:{ id:'grad_damage', name:'HEAVY ROUNDS', desc:'Bullets deal 2 damage instead of 1', icon:'💥' },
+      },
+      {
+        name:'ExchangeStudent', icon:'✈', stereo:'extends Student',
+        desc:'Studying abroad temporarily',
+        own:['- homeCountry: String','- hostUniversity: String','- visaExpiry: String',
+             '+ transferCredits(): void','+ extendVisa(): void','+ sendPostcard(): void','+ learnLanguage(): void'],
+        perk:{ id:'exchange_spread', name:'WIDE SPREAD', desc:'Bullets fire in wider 5-shot arc', icon:'╳' },
+      }
+    ]
+  },
+  {
+    name:'Book', color:'#00ff9d', stereo:'',
+    desc:'A library catalog entity',
+    own:['- isbn: String','- title: String','- author: String','- pageCount: int',
+         '- available: bool','+ checkout(user): void','+ returnBook(): void','+ getInfo(): String'],
+    bad:['- plateNo: String','+ accelerate(): void','- health: int','+ attack(): void',
+         '+ defend(): void','- level: int','+ respawn(): void','- bandwidth: int',
+         '+ disconnect(): void','- inkLevel: float','+ scan(): void',
+         '- altitude: float','+ delay(min): void','- gate: String'],
+    children: [
+      {
+        name:'Textbook', icon:'📚', stereo:'extends Book',
+        desc:'Educational reference material',
+        own:['- subject: String','- edition: int','- hasExercises: bool',
+             '+ highlightSection(): void','+ addBookmark(p): void','+ getSolution(ch): String','+ cite(): String'],
+        perk:{ id:'textbook_slow', name:'STUDY BREAK', desc:'All enemies move 20% slower', icon:'📖' },
+      },
+      {
+        name:'Novel', icon:'📕', stereo:'extends Book',
+        desc:'Fiction narrative publication',
+        own:['- genre: String','- chapters: int','- isBestseller: bool',
+             '+ readChapter(n): void','+ writeReview(): void','+ recommend(): void','+ getGenre(): String'],
+        perk:{ id:'novel_xray', name:'LONG X-RAY', desc:'X-Ray scan lasts twice as long', icon:'🔍' },
+      }
+    ]
   },
   {
     name:'Hospital', color:'#ff4fa0', stereo:'<<system>>',
@@ -437,10 +573,168 @@ const LEVELS = [
     bad:['- isbn: String','+ shuffle(): void','- breed: String','+ sit(): void',
          '- plateNo: String','+ brake(): void','- gpa: float','+ submitAssignment(): void',
          '- health: int','+ respawn(): void','+ attack(): void','- songs: List',
-         '+ addSong(): void','- duration: int','- subject: String','+ send(): void',
-         '+ reply(): void','- recipient: String','- discount: float',
-         '+ removeItem(): void']
+         '+ addSong(): void','- duration: int','- subject: String','+ send(): void'],
+    children: [
+      {
+        name:'Clinic', icon:'🏥', stereo:'extends Hospital',
+        desc:'Small outpatient medical facility',
+        own:['- specialty: String','- doctorCount: int','- hasEmergency: bool',
+             '+ scheduleAppt(p): void','+ cancelAppt(id): void','+ getWaitTime(): int','+ referPatient(h): void'],
+        perk:{ id:'clinic_regen', name:'REGEN', desc:'Regenerate 1 life every 2 levels', icon:'💚' },
+      },
+      {
+        name:'Pharmacy', icon:'💊', stereo:'extends Hospital',
+        desc:'Medication dispensing facility',
+        own:['- license: String','- inventory: Map','- pharmacist: String',
+             '+ fillPrescription(rx): void','+ checkStock(med): bool','+ orderSupply(med): void','+ verifyDosage(): bool'],
+        perk:{ id:'pharmacy_shield', name:'SHIELD BURST', desc:'Start each level with 2 shield charges', icon:'🛡' },
+      }
+    ]
   },
+  {
+    name:'Person', color:'#88ccff', stereo:'',
+    desc:'Base class for human beings',
+    own:['- firstName: String','- lastName: String','- birthDate: String','- email: String',
+         '+ getFullName(): String','+ getAge(): int','+ updateEmail(e): void'],
+    bad:['- isbn: String','+ checkout(): void','- plateNo: String','+ refuel(): void',
+         '- breed: String','+ bark(): void','- balance: double','+ deposit(): void',
+         '- capacity: int','+ admitPatient(): void','- engineCC: int','+ accelerate(): void',
+         '- songs: List','+ shuffle(): void','- priority: int','+ snooze(): void'],
+    children: [
+      {
+        name:'Teacher', icon:'👩‍🏫', stereo:'extends Person',
+        desc:'Educational instructor',
+        own:['- subject: String','- yearsExp: int','- classroom: String',
+             '+ teachLesson(): void','+ gradeExam(): void','+ assignHomework(): void','+ holdOfficeHours(): void'],
+        perk:{ id:'teacher_acc', name:'ACCURACY BONUS', desc:'+30% score bonus for 90%+ accuracy levels', icon:'🎯' },
+      },
+      {
+        name:'Doctor', icon:'👨‍⚕', stereo:'extends Person',
+        desc:'Medical practitioner',
+        own:['- specialty: String','- licenseNo: String','- hospital: String',
+             '+ diagnose(p): String','+ prescribe(med): void','+ performSurgery(): void','+ consult(): void'],
+        perk:{ id:'doctor_lifesteal', name:'LIFE STEAL', desc:'Restore 1 life every 25 kills', icon:'❤' },
+      }
+    ]
+  },
+  {
+    name:'Device', color:'#66ffcc', stereo:'',
+    desc:'Electronic hardware device',
+    own:['- deviceId: String','- brand: String','- battery: int','- isOn: bool',
+         '+ powerOn(): void','+ powerOff(): void','+ charge(): void','+ reset(): void'],
+    bad:['- gpa: float','+ enroll(): void','- salary: double','+ clockIn(): void',
+         '- isbn: String','+ returnBook(): void','- breed: String','+ fetch(): void',
+         '- plateNo: String','+ brake(): void','- balance: double','+ withdraw(): bool',
+         '- capacity: int','+ admitPatient(): void','- ingredients: List','+ cook(): void'],
+    children: [
+      {
+        name:'Phone', icon:'📱', stereo:'extends Device',
+        desc:'Mobile communication device',
+        own:['- phoneNumber: String','- carrier: String','- screenSize: float',
+             '+ call(number): void','+ sendText(msg): void','+ installApp(a): void','+ takePhoto(): void'],
+        perk:{ id:'phone_target', name:'AUTO-TARGET', desc:'Bullets curve toward nearest imposter', icon:'📡' },
+      },
+      {
+        name:'Laptop', icon:'💻', stereo:'extends Device',
+        desc:'Portable computing device',
+        own:['- ram: int','- storage: int','- os: String',
+             '+ openApp(a): void','+ compile(): void','+ connectWifi(ssid): void','+ sleep(): void'],
+        perk:{ id:'laptop_pierce', name:'PIERCE SHOT', desc:'Bullets pass through 2 enemies', icon:'◐' },
+      }
+    ]
+  },
+  {
+    name:'Building', color:'#ccaa66', stereo:'',
+    desc:'Physical structure or facility',
+    own:['- address: String','- floors: int','- yearBuilt: int','- sqMeters: double',
+         '+ getFloorPlan(): String','+ evacuate(): void','+ lockDown(): void','+ renovate(): void'],
+    bad:['- breed: String','+ bark(): void','- gpa: float','+ submitAssignment(): void',
+         '- balance: double','+ deposit(): void','- plateNo: String','+ accelerate(): void',
+         '- isbn: String','+ checkout(): void','- salary: double','+ clockIn(): void',
+         '- battery: int','+ charge(): void','- phoneNumber: String','+ call(): void'],
+    children: [
+      {
+        name:'Library', icon:'🏛', stereo:'extends Building',
+        desc:'Public book lending facility',
+        own:['- bookCount: int','- sections: List','- hasWifi: bool',
+             '+ searchCatalog(q): List','+ issueCard(): void','+ hostEvent(e): void','+ quietHours(): void'],
+        perk:{ id:'library_panel', name:'EXTENDED REF', desc:'Reference panel stays 2 extra levels', icon:'📋' },
+      },
+      {
+        name:'Warehouse', icon:'🏭', stereo:'extends Building',
+        desc:'Large storage facility',
+        own:['- capacity: double','- zones: int','- hasForklift: bool',
+             '+ storeItem(i): void','+ retrieveItem(id): void','+ audit(): void','+ expandZone(): void'],
+        perk:{ id:'warehouse_nuke', name:'NUKE CHARGE', desc:'Start each level with 1 nuke', icon:'☢' },
+      }
+    ]
+  },
+  {
+    name:'Food', color:'#ff9966', stereo:'',
+    desc:'Consumable nutrition entity',
+    own:['- name: String','- calories: int','- isVegan: bool','- expiryDate: String',
+         '+ consume(): void','+ getCalories(): int','+ isExpired(): bool','+ reheat(): void'],
+    bad:['- plateNo: String','+ accelerate(): void','- isbn: String','+ checkout(): void',
+         '- breed: String','+ bark(): void','- balance: double','+ deposit(): void',
+         '- gpa: float','+ enroll(): void','- salary: double','+ clockIn(): void',
+         '- battery: int','+ powerOn(): void','- floors: int','+ evacuate(): void'],
+    children: [
+      {
+        name:'Pizza', icon:'🍕', stereo:'extends Food',
+        desc:'Italian flatbread dish',
+        own:['- size: String','- toppings: List','- crustType: String',
+             '+ addTopping(t): void','+ slice(): void','+ deliverTo(addr): void','+ getPrice(): double'],
+        perk:{ id:'pizza_slow', name:'FOOD COMA', desc:'Enemies spawn slowed 15% for 2 seconds', icon:'🍕' },
+      },
+      {
+        name:'Salad', icon:'🥗', stereo:'extends Food',
+        desc:'Fresh mixed vegetable dish',
+        own:['- dressing: String','- isOrganic: bool','- weight: float',
+             '+ toss(): void','+ addDressing(d): void','+ getDressing(): String','+ getWeight(): float'],
+        perk:{ id:'salad_combo', name:'VITALITY', desc:'+20% speed and regen 1 life every 3 levels', icon:'🥗' },
+      }
+    ]
+  },
+  {
+    name:'Game', color:'#aa66ff', stereo:'',
+    desc:'Interactive entertainment product',
+    own:['- title: String','- genre: String','- rating: String','- playerCount: int',
+         '+ start(): void','+ pause(): void','+ saveProgress(): void','+ getScore(): int'],
+    bad:['- isbn: String','+ checkout(): void','- breed: String','+ bark(): void',
+         '- plateNo: String','+ refuel(): void','- salary: double','+ clockIn(): void',
+         '- balance: double','+ deposit(): void','- battery: int','+ charge(): void',
+         '- floors: int','+ evacuate(): void','- calories: int','+ consume(): void'],
+    children: [
+      {
+        name:'BoardGame', icon:'🎲', stereo:'extends Game',
+        desc:'Tabletop strategy game',
+        own:['- pieceCount: int','- minAge: int','- playTime: int',
+             '+ rollDice(): int','+ movePiece(p): void','+ drawCard(): void','+ checkWin(): bool'],
+        perk:{ id:'board_freeze', name:'FREEZE FIELD', desc:'Freeze all enemies 3s once per level', icon:'❄' },
+      },
+      {
+        name:'VideoGame', icon:'🎮', stereo:'extends Game',
+        desc:'Digital interactive game',
+        own:['- platform: String','- fps: int','- isOnline: bool',
+             '+ loadLevel(n): void','+ respawn(): void','+ connectOnline(): void','+ adjustSettings(): void'],
+        perk:{ id:'vgame_score', name:'2X MULTIPLIER', desc:'Double score for all kills', icon:'✕2' },
+      }
+    ]
+  },
+];
+
+// ══════════════════════════════════════════
+// LEVEL THEMES
+// ══════════════════════════════════════════
+const LEVEL_THEMES = [
+  { bg:'#01060f', grid:'rgba(0,50,100,.06)',  star:'80,160,220' },
+  { bg:'#0a0610', grid:'rgba(60,0,100,.07)', star:'160,80,220' },
+  { bg:'#0a0400', grid:'rgba(100,40,0,.07)', star:'220,120,40' },
+  { bg:'#000a06', grid:'rgba(0,80,30,.07)',  star:'60,200,100' },
+  { bg:'#0a0000', grid:'rgba(100,0,0,.06)',  star:'220,60,60' },
+  { bg:'#06000a', grid:'rgba(80,0,80,.06)',  star:'180,60,180' },
+  { bg:'#0a0800', grid:'rgba(100,80,0,.06)', star:'220,200,40' },
+  { bg:'#050008', grid:'rgba(60,0,80,.07)',  star:'140,40,200' },
 ];
 
 // ══════════════════════════════════════════
@@ -463,47 +757,68 @@ function selDiff(k) {
 }
 
 // ══════════════════════════════════════════
-// UPGRADE DEFINITIONS
+// SHOP UPGRADE DEFINITIONS
 // ══════════════════════════════════════════
-const UPG_DEFS = [
-  { id:'speed',    icon:'⚡', name:'OVERCLOCK',   max:3, desc:'Player move speed +35% per level' },
-  { id:'fire',     icon:'🔫', name:'RAPID FIRE',  max:3, desc:'Bullet cooldown -28% per level' },
-  { id:'multi',    icon:'⋈',  name:'MULTI-SHOT',  max:1, desc:'Fire 3 bullets simultaneously' },
-  { id:'spread',   icon:'╳',  name:'SPREAD SHOT', max:1, desc:'Fire 5 bullets in wide arc' },
-  { id:'laser',    icon:'🔴', name:'LASER SIGHT',  max:1, desc:'Shows a targeting line where your shots will land' },
-  { id:'shield',   icon:'🛡', name:'FIREWALL',    max:2, desc:'+1 absorb charge per level' },
-  { id:'slow',     icon:'⏳', name:'TIME DILATION',max:3, desc:'T1: -15% speed, T2: -22%, T3: kills slow 30% for 2s' },
-  { id:'nuke',     icon:'☢',  name:'SCHEMA NUKE', max:3, desc:'+1 nuke charge usable each level' },
-  { id:'magnet',   icon:'⊕',  name:'DATA MAGNET', max:1, desc:'Own members that escape auto-dock for +20 pts (reduced)' },
-  { id:'regen',    icon:'♥',  name:'REGEN PATCH', max:2, desc:'+1 life restored (max 5)' },
-  { id:'pierce',   icon:'◐',  name:'PIERCE SHOT', max:1, desc:'Bullets pass through 2 enemies' },
-  { id:'bomb',     icon:'💥', name:'PROXIMITY BOMB',max:2, desc:'Kills all imposters in kill zone on dock' },
+const SHOP_DEFS = [
+  { id:'speed',    icon:'⚡', name:'OVERCLOCK',    max:3, desc:'Player move speed +35% per level',      cost:80 },
+  { id:'fire',     icon:'🔫', name:'RAPID FIRE',   max:3, desc:'Bullet cooldown -28% per level',        cost:100 },
+  { id:'multi',    icon:'⋈',  name:'MULTI-SHOT',   max:1, desc:'Fire 3 bullets simultaneously',         cost:200 },
+  { id:'spread',   icon:'╳',  name:'SPREAD SHOT',  max:1, desc:'Fire 5 bullets in wide arc',            cost:250 },
+  { id:'laser',    icon:'🔴', name:'LASER SIGHT',   max:1, desc:'Shows a targeting line',                cost:120 },
+  { id:'shield',   icon:'🛡', name:'FIREWALL',     max:2, desc:'+1 absorb charge per level',            cost:150 },
+  { id:'slow',     icon:'⏳', name:'TIME DILATION', max:3, desc:'T1: -15% spd, T2: -22%, T3: kill slow', cost:130 },
+  { id:'nuke',     icon:'☢',  name:'SCHEMA NUKE',  max:3, desc:'+1 nuke charge usable each level',      cost:180 },
+  { id:'magnet',   icon:'⊕',  name:'DATA MAGNET',  max:1, desc:'Own members that escape auto-dock',     cost:140 },
+  { id:'regen',    icon:'♥',  name:'REGEN PATCH',  max:2, desc:'+1 life restored (max cap)',             cost:160 },
+  { id:'pierce',   icon:'◐',  name:'PIERCE SHOT',  max:1, desc:'Bullets pass through 2 enemies',        cost:200 },
+  { id:'bomb',     icon:'💥', name:'PROX BOMB',    max:2, desc:'Kills imposters in kill zone on dock',   cost:170 },
 ];
 
 // ══════════════════════════════════════════
 // GAME STATE
 // ══════════════════════════════════════════
-let G = null; // initialized in initGame
+let G = null;
 let RAF = null;
-let ACTIVE = false; // is game loop running
+let ACTIVE = false;
 let PAUSED = false;
 
 function initGame() {
   const D = DIFFS[DIFF_KEY];
+
+  // Pick 4 random base classes for this run
+  const shuffled = [...CLASS_TREE].sort(() => Math.random() - 0.5);
+  const chosen = shuffled.slice(0, 4);
+
+  // Build 8-level sequence: parent1, child1, parent2, child2, ...
+  // Children chosen later by player
+  const runPlan = [];
+  chosen.forEach(base => {
+    runPlan.push({ type:'parent', base });
+    runPlan.push({ type:'child', base, child:null }); // filled when player chooses
+  });
+
   G = {
     D,
     lvl:    0,
     lives:  D.lives,
+    maxLives: D.lives,
     score:  0,
+    coins:  0,
     kills:  0,
     totalShots:  0,
     totalHits:   0,
     frame:  0,
-    phase:  'idle', // idle | announce | playing | upgrade | over
+    phase:  'idle',
+
+    // run plan
+    runPlan,
+
+    // active level data (set in beginLevel)
+    currentClass: null,
 
     // player
     px: W / 2,
-    py: 0, // set in startLevel
+    py: 0,
     pw: 230,
     ph: 84,
 
@@ -517,69 +832,108 @@ function initGame() {
     spawnInterval: D.spawnBase,
     killsNeeded:   0,
 
-    // upgrades
+    // upgrades (shop)
     upg: {},
 
-    // derived (recalc each level/upgrade)
+    // perks (from branch choices)
+    perks: {},
+
+    // derived
     playerSpd:    5.5,
     bulletCD:     0,
     bulletCDBase: 18,
     shieldHP:     0,
     nukeCharges:  0,
     globalSlowMult: 1.0,
-    globalSpdMult:  1.0, // ramps per wave inside level
+    globalSpdMult:  1.0,
 
-    // Time Dilation T3 slow debuff
     slowDebuffTimer: 0,
-
-    // Screen shake
     shakeTimer: 0,
     shakeIntensity: 0,
 
+    // Perk tracking
+    killsSinceLastHeal: 0,
+    levelsSinceRegen: 0,
+
     // Tracking
     dockedMembers: [],
-    levelStats: [],   // { level, kills, shots, hits, docked }
+    levelStats: [],
     lvlShots: 0,
     lvlHits: 0,
     lvlDocked: 0,
 
-    // Laser tick limiter (unused - laser is now passive sight)
-    // laserTickCD: 0,
+    freezeTimer: 0,
+    freezeUsed: false,
 
-    // input
     keys: {},
-    shotLocked: false, // prevent auto-fire on laser
+    shotLocked: false,
   };
-  UPG_DEFS.forEach(u => G.upg[u.id] = 0);
+  SHOP_DEFS.forEach(u => G.upg[u.id] = 0);
   G.py = H - G.ph / 2 - 55;
 }
 
 function recalcStats() {
   const u = G.upg;
-  G.playerSpd    = 5.5 + u.speed * 1.8;
-  G.bulletCDBase = Math.max(6, 18 - u.fire * 5);
-  // Time Dilation: T1=15%, T2=22%, T3=22% base (30% burst handled in update)
+  let spdBonus = u.speed * 1.8;
+  if (G.perks.car_speed) spdBonus += 2.2;
+  if (G.perks.salad_combo) spdBonus += 1.1;
+  G.playerSpd = 5.5 + spdBonus;
+
+  let fireBonus = u.fire * 5;
+  if (G.perks.manager_fire) fireBonus += 6;
+  G.bulletCDBase = Math.max(4, 18 - fireBonus);
+
   const slowPct = u.slow >= 2 ? 0.22 : u.slow >= 1 ? 0.15 : 0;
-  G.globalSlowMult = Math.max(0.35, 1 - slowPct);
-  // shield resets per level
+  let totalSlow = slowPct;
+  if (G.perks.textbook_slow) totalSlow += 0.20;
+  G.globalSlowMult = Math.max(0.30, 1 - totalSlow);
+
   G.shieldHP = u.shield;
+  if (G.perks.pharmacy_shield) G.shieldHP += 2;
 }
 
-const KILLS_PER_LEVEL = [10, 14, 18, 22, 26, 30, 34, 36];
-function killsForLevel(lv) { return KILLS_PER_LEVEL[lv] ?? 44; }
+const KILLS_PER_LEVEL = [10, 14, 16, 20, 22, 26, 28, 32];
+function killsForLevel(lv) { return KILLS_PER_LEVEL[lv] ?? 36; }
 
 // ══════════════════════════════════════════
 // LAYER MANAGEMENT
 // ══════════════════════════════════════════
-const LAYERS = ['start','howto','pause','announce','upgrade','over'];
+const LAYERS = ['start','howto','pause','announce','branch','shop','upgrade','over'];
 function showLayer(name) {
   LAYERS.forEach(l => {
-    const el = document.getElementById('layer-'+l);
-    el.classList.toggle('hidden', l !== name);
+    document.getElementById('layer-'+l).classList.toggle('hidden', l !== name);
   });
 }
 function hideAllLayers() {
   LAYERS.forEach(l => document.getElementById('layer-'+l).classList.add('hidden'));
+}
+
+// ══════════════════════════════════════════
+// GET CURRENT LEVEL DATA
+// ══════════════════════════════════════════
+function getLevelData() {
+  const plan = G.runPlan[G.lvl];
+  if (plan.type === 'parent') {
+    return {
+      name: plan.base.name,
+      color: plan.base.color,
+      stereo: plan.base.stereo,
+      desc: plan.base.desc,
+      own: plan.base.own,
+      bad: plan.base.bad,
+    };
+  } else {
+    const child = plan.child;
+    // Child uses parent bad pool + other classes' members
+    return {
+      name: child.name,
+      color: plan.base.color,
+      stereo: child.stereo,
+      desc: child.desc,
+      own: child.own,
+      bad: plan.base.bad,
+    };
+  }
 }
 
 // ══════════════════════════════════════════
@@ -596,8 +950,8 @@ function startGame() {
 function beginLevel() {
   G.phase = 'announce';
   recalcStats();
-  G.shieldHP    = G.upg.shield;
-  G.nukeCharges += G.upg.nuke;
+  G.shieldHP    = G.upg.shield + (G.perks.pharmacy_shield ? 2 : 0);
+  G.nukeCharges = G.upg.nuke + (G.perks.warehouse_nuke ? 1 : 0);
   G.kills       = 0;
   G.killsNeeded = killsForLevel(G.lvl);
   G.frame       = 0;
@@ -613,9 +967,31 @@ function beginLevel() {
   G.lvlShots = 0;
   G.lvlHits = 0;
   G.lvlDocked = 0;
+  G.freezeUsed = false;
+  G.freezeTimer = 0;
 
-  // Announce
-  const LD = LEVELS[G.lvl];
+  // Clinic regen perk
+  if (G.perks.clinic_regen) {
+    G.levelsSinceRegen++;
+    if (G.levelsSinceRegen >= 2) {
+      G.lives = Math.min(G.maxLives, G.lives + 1);
+      G.levelsSinceRegen = 0;
+      showPerkToast('💚 REGEN: +1 life');
+    }
+  }
+  // Salad regen perk
+  if (G.perks.salad_combo) {
+    G.levelsSinceRegen = (G.levelsSinceRegen || 0);
+    // Uses same counter but triggers every 3
+    if (G.lvl > 0 && G.lvl % 3 === 0) {
+      G.lives = Math.min(G.maxLives, G.lives + 1);
+      showPerkToast('🥗 VITALITY: +1 life');
+    }
+  }
+
+  G.currentClass = getLevelData();
+  const LD = G.currentClass;
+
   document.getElementById('ann-lv').textContent   = 'LEVEL ' + (G.lvl + 1);
   document.getElementById('ann-name').textContent = LD.name;
   document.getElementById('ann-desc').textContent = LD.desc;
@@ -623,12 +999,21 @@ function beginLevel() {
   document.getElementById('ann-name').style.color = LD.color + 'cc';
   document.getElementById('ann-box').style.borderColor = LD.color;
   document.getElementById('ann-box').style.color  = LD.color;
-  showLayer('announce');
 
+  const plan = G.runPlan[G.lvl];
+  const inheritEl = document.getElementById('ann-inherit');
+  if (plan.type === 'child') {
+    inheritEl.textContent = '⬆ inherits from ' + plan.base.name;
+    inheritEl.style.display = '';
+  } else {
+    inheritEl.style.display = 'none';
+  }
+
+  showLayer('announce');
   if (!ACTIVE) { ACTIVE = true; RAF = requestAnimationFrame(loop); }
 
   setTimeout(() => {
-    if (G.phase !== 'announce') return; // aborted
+    if (G.phase !== 'announce') return;
     hideAllLayers();
     G.phase = 'playing';
     updateHUD();
@@ -636,27 +1021,153 @@ function beginLevel() {
 }
 
 function levelDone() {
-  // Save level stats
   G.levelStats.push({
     level: G.lvl,
-    name: LEVELS[G.lvl].name,
+    name: G.currentClass.name,
     kills: G.kills,
     shots: G.lvlShots,
     hits: G.lvlHits,
     docked: G.lvlDocked,
     acc: G.lvlShots > 0 ? Math.round(G.lvlHits / G.lvlShots * 100) : 0
   });
+
+  // Teacher accuracy bonus perk
+  if (G.perks.teacher_acc && G.lvlShots > 0) {
+    const acc = G.lvlHits / G.lvlShots;
+    if (acc >= 0.9) {
+      const bonus = Math.round(G.score * 0.3);
+      G.score += bonus;
+      showPerkToast('🎯 ACCURACY BONUS: +' + bonus);
+    }
+  }
+
   G.members = [];
   G.bullets = [];
 
-  // Last level? Go straight to win
-  if (G.lvl + 1 >= LEVELS.length) {
+  // Last level?
+  if (G.lvl + 1 >= 8) {
     doWin();
     return;
   }
 
-  G.phase = 'upgrade';
-  showUpgradeScreen();
+  const plan = G.runPlan[G.lvl];
+
+  if (plan.type === 'parent') {
+    // Show branch choice
+    G.phase = 'branch';
+    showBranchScreen(plan.base);
+  } else {
+    // After child level: show shop every 2 levels (after levels 2,4,6)
+    if ((G.lvl + 1) % 2 === 0 && G.lvl + 1 < 8) {
+      G.phase = 'shop';
+      showShopScreen();
+    } else {
+      proceedNextLevel();
+    }
+  }
+}
+
+function showBranchScreen(base) {
+  document.getElementById('branch-sub').textContent =
+    base.name + ' MASTERED! Choose your specialization:';
+  const grid = document.getElementById('branch-grid');
+  grid.innerHTML = '';
+
+  base.children.forEach(child => {
+    const card = document.createElement('div');
+    card.className = 'branch-card';
+    card.innerHTML = `
+      <span class="bc-icon">${child.icon}</span>
+      <div class="bc-name">${child.name}</div>
+      <div class="bc-stereo">${child.stereo}</div>
+      <div class="bc-members">${child.own.join('<br>')}</div>
+      <div class="bc-perk">${child.perk.icon} ${child.perk.name}: ${child.perk.desc}</div>
+    `;
+    card.addEventListener('click', () => chooseBranch(base, child));
+    grid.appendChild(card);
+  });
+  showLayer('branch');
+}
+
+function chooseBranch(base, child) {
+  // Set the child in the run plan
+  const childIdx = G.lvl + 1;
+  G.runPlan[childIdx].child = child;
+
+  // Grant perk
+  G.perks[child.perk.id] = true;
+
+  // Special perk: truck gives +2 max lives
+  if (child.perk.id === 'truck_hp') {
+    G.maxLives = Math.min(7, G.maxLives + 2);
+    G.lives = Math.min(G.maxLives, G.lives + 2);
+  }
+  if (child.perk.id === 'dog_life') {
+    G.maxLives = Math.min(7, G.maxLives + 1);
+    G.lives = Math.min(G.maxLives, G.lives + 1);
+  }
+
+  showPerkToast(child.perk.icon + ' ' + child.perk.name + ' ACQUIRED!');
+  hideAllLayers();
+  proceedNextLevel();
+}
+
+function showShopScreen() {
+  document.getElementById('shop-coins').textContent = 'COINS: ' + G.coins;
+  buildShopGrid();
+  showLayer('shop');
+}
+
+function buildShopGrid() {
+  const grid = document.getElementById('shop-grid');
+  grid.innerHTML = '';
+  const available = SHOP_DEFS.filter(u => G.upg[u.id] < u.max);
+  const shuffled = available.sort(() => Math.random() - 0.5).slice(0, 6);
+
+  if (shuffled.length === 0) {
+    grid.innerHTML = '<div style="color:#4af;font-size:12px;padding:20px;">All upgrades maxed!</div>';
+    return;
+  }
+
+  shuffled.forEach(u => {
+    const cur = G.upg[u.id];
+    let cost = u.cost * (cur + 1);
+    if (G.perks.credit_discount) cost = Math.round(cost * 0.7);
+    const canAfford = G.coins >= cost;
+
+    const card = document.createElement('div');
+    card.className = 'shop-card' + (!canAfford ? ' locked' : '');
+    card.innerHTML = `
+      <span class="uc-icon">${u.icon}</span>
+      <div class="uc-name">${u.name}${cur>0?` Lv${cur} → Lv${cur+1}`:''}</div>
+      <div class="uc-lvl">Tier ${cur+1} / ${u.max}</div>
+      <div class="uc-desc">${u.desc}</div>
+      <div class="uc-cost">🪙 ${cost}</div>
+    `;
+    if (canAfford) {
+      card.addEventListener('click', () => buyUpgrade(u.id, cost));
+    }
+    grid.appendChild(card);
+  });
+}
+
+function buyUpgrade(id, cost) {
+  if (G.coins < cost) return;
+  const def = SHOP_DEFS.find(u => u.id === id);
+  if (!def || G.upg[id] >= def.max) return;
+  G.coins -= cost;
+  G.upg[id]++;
+  if (id === 'regen') {
+    G.lives = Math.min(G.maxLives, G.lives + 1);
+  }
+  // Refresh shop
+  document.getElementById('shop-coins').textContent = 'COINS: ' + G.coins;
+  buildShopGrid();
+}
+
+function skipShop() {
+  hideAllLayers();
+  proceedNextLevel();
 }
 
 function skipUpgrade() {
@@ -664,17 +1175,17 @@ function skipUpgrade() {
 }
 
 function applyUpgrade(id) {
-  const def = UPG_DEFS.find(u => u.id === id);
+  const def = SHOP_DEFS.find(u => u.id === id);
   if (!def || G.upg[id] >= def.max) return;
   G.upg[id]++;
-  if (id === 'regen') { G.lives = Math.min(5, G.lives + 1); }
+  if (id === 'regen') { G.lives = Math.min(G.maxLives, G.lives + 1); }
   proceedNextLevel();
 }
 
 function proceedNextLevel() {
   hideAllLayers();
   G.lvl++;
-  if (G.lvl >= LEVELS.length) { doWin(); return; }
+  if (G.lvl >= 8) { doWin(); return; }
   beginLevel();
 }
 
@@ -687,9 +1198,9 @@ function gameOver() {
   t.style.color = 'var(--red)';
   t.style.textShadow = '0 0 40px var(--red)';
   document.getElementById('over-stats').innerHTML =
-    `<div style="font-size:18px;margin-bottom:8px;">Died on Level ${G.lvl+1} - ${LEVELS[G.lvl].name}</div>` +
-    `Accuracy: ${accStr()} &nbsp;·&nbsp; Kills: ${G.kills}<br>` +
-    `Members docked: ${G.dockedMembers.length}` +
+    `<div style="font-size:18px;margin-bottom:8px;">Died on Level ${G.lvl+1} - ${G.currentClass.name}</div>` +
+    `Accuracy: ${accStr()} · Kills: ${G.kills}<br>` +
+    `Members docked: ${G.dockedMembers.length}<br>Coins earned: ${G.coins}` +
     buildLevelBreakdown();
   document.getElementById('over-score').textContent = 'SCORE: ' + G.score;
   showLayer('over');
@@ -703,9 +1214,9 @@ function doWin() {
   t.style.color = 'var(--grn)';
   t.style.textShadow = '0 0 40px var(--grn)';
   document.getElementById('over-stats').innerHTML =
-    `<div style="font-size:16px;margin-bottom:6px;">All 8 classes defended - System integrity: INTACT</div>` +
-    `Accuracy: ${accStr()} &nbsp;·&nbsp; Total Kills: ${G.totalHits}<br>` +
-    `Members docked: ${G.dockedMembers.length}` +
+    `<div style="font-size:16px;margin-bottom:6px;">All 8 classes defended! System integrity: INTACT</div>` +
+    `Accuracy: ${accStr()} · Total Kills: ${G.totalHits}<br>` +
+    `Members docked: ${G.dockedMembers.length}<br>Coins earned: ${G.coins}` +
     buildLevelBreakdown();
   document.getElementById('over-score').textContent = 'FINAL SCORE: ' + G.score;
   showLayer('over');
@@ -716,15 +1227,14 @@ function buildLevelBreakdown() {
   let html = '<div style="margin-top:12px;font-size:10px;letter-spacing:.1em;color:#4af;">LEVEL BREAKDOWN</div>';
   html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px 12px;margin-top:6px;font-size:11px;text-align:left;">';
   G.levelStats.forEach(s => {
-    const col = LEVELS[s.level]?.color || '#aaa';
-    html += `<div style="color:${col};">${s.level+1}. ${s.name} <span style="color:#8ab;">${s.acc}% acc, ${s.docked} docked</span></div>`;
+    html += `<div style="color:#8ab;">${s.level+1}. ${s.name} <span style="color:#567;">${s.acc}% acc, ${s.docked} docked</span></div>`;
   });
   html += '</div>';
   return html;
 }
 
 function accStr() {
-  return G.totalShots > 0 ? Math.round(G.totalHits / G.totalShots * 100) + '%' : '—';
+  return G.totalShots > 0 ? Math.round(G.totalHits / G.totalShots * 100) + '%' : '---';
 }
 
 function resume() {
@@ -732,13 +1242,11 @@ function resume() {
   hideAllLayers();
   if (!RAF) RAF = requestAnimationFrame(loop);
 }
-
 function restartLevel() {
   PAUSED = false;
   hideAllLayers();
   beginLevel();
 }
-
 function toMenu() {
   stopLoop();
   PAUSED = false;
@@ -747,13 +1255,11 @@ function toMenu() {
   document.getElementById('upg-strip').style.display = 'none';
   showLayer('start');
 }
-
 function fullRestart() {
   stopLoop();
   hideAllLayers();
   startGame();
 }
-
 function stopLoop() {
   ACTIVE = false;
   if (RAF) { cancelAnimationFrame(RAF); RAF = null; }
@@ -772,6 +1278,7 @@ window.addEventListener('keydown', e => {
     else if (PAUSED) resume();
   }
   if (e.code === 'KeyN' && G.phase === 'playing') doNuke();
+  if (e.code === 'KeyF' && G.phase === 'playing') doFreeze();
 });
 window.addEventListener('keyup', e => { if (G && G.keys) G.keys[e.code] = false; });
 
@@ -780,10 +1287,7 @@ window.addEventListener('keyup', e => { if (G && G.keys) G.keys[e.code] = false;
 // ══════════════════════════════════════════
 function loop() {
   if (!ACTIVE) return;
-  if (!PAUSED) {
-    update();
-    draw();
-  }
+  if (!PAUSED) { update(); draw(); }
   RAF = requestAnimationFrame(loop);
 }
 
@@ -794,22 +1298,19 @@ function update() {
   if (G.phase !== 'playing') { drawBg(); return; }
   G.frame++;
 
-  // ── Time Dilation T3 slow debuff countdown ──
   if (G.slowDebuffTimer > 0) G.slowDebuffTimer--;
-
-  // ── Screen shake countdown ──
   if (G.shakeTimer > 0) G.shakeTimer--;
+  if (G.freezeTimer > 0) G.freezeTimer--;
 
-  // ── Player movement ──
+  // Player movement
   const spd = G.playerSpd;
   if (G.keys['ArrowLeft']  || G.keys['KeyA']) G.px = Math.max(G.pw/2 + 6, G.px - spd);
   if (G.keys['ArrowRight'] || G.keys['KeyD']) G.px = Math.min(W - G.pw/2 - 6, G.px + spd);
 
-  // ── Shoot ──
   if (G.keys['Space']) doShoot();
   if (G.bulletCD > 0) G.bulletCD--;
 
-  // ── Spawn ramp ──
+  // Spawn
   G.spawnTimer--;
   if (G.spawnTimer <= 0) {
     spawnMember();
@@ -818,115 +1319,165 @@ function update() {
     G.spawnTimer = G.spawnInterval;
   }
 
-  // ── Global speed ramp inside level ──
   if (G.frame % 480 === 0) G.globalSpdMult = Math.min(2.6, G.globalSpdMult + 0.08);
 
-  // ── Move bullets ──
+  // Move bullets
   for (let i = G.bullets.length - 1; i >= 0; i--) {
     const b = G.bullets[i];
+    // Phone auto-target perk: curve toward nearest imposter
+    if (G.perks.phone_target && b.trackTimer > 0) {
+      b.trackTimer--;
+      let nearest = null, bestD = 999999;
+      G.members.forEach(m => {
+        if (!m.alive || !m.isImposter) return;
+        const d = Math.hypot(m.x - b.x, m.y - b.y);
+        if (d < bestD) { bestD = d; nearest = m; }
+      });
+      if (nearest && bestD < 300) {
+        const angle = Math.atan2(nearest.y - b.y, nearest.x - b.x);
+        b.vx += Math.cos(angle) * 0.6;
+        b.vy += Math.sin(angle) * 0.6;
+        const spd = Math.hypot(b.vx, b.vy);
+        const maxSpd = 14;
+        if (spd > maxSpd) { b.vx = b.vx/spd*maxSpd; b.vy = b.vy/spd*maxSpd; }
+      }
+    }
     b.x += b.vx; b.y += b.vy;
-    if (b.y < -20) { G.bullets.splice(i, 1); continue; }
-    if (b.pierce !== undefined) { /* keep */ }
+    if (b.y < -20 || b.x < -20 || b.x > W+20) { G.bullets.splice(i, 1); }
   }
 
-  // ── Move members ──
-  const slowDebuffMult = G.slowDebuffTimer > 0 ? 0.70 : 1.0; // T3: 30% slow for 2s
-  const baseSpd = G.D.spd * G.globalSpdMult * G.globalSlowMult * slowDebuffMult * (1 + G.lvl * 0.17);
+  // Move members
+  const frozen = G.freezeTimer > 0;
+  const slowDebuffMult = G.slowDebuffTimer > 0 ? 0.70 : 1.0;
   for (let i = G.members.length - 1; i >= 0; i--) {
     const m = G.members[i];
-    m.y += m.speed;
-    if (G.lvl >= 3) m.x = clamp(m.x + m.drift, m.w/2 + 4, W - m.w/2 - 4);
+    if (!frozen) {
+      const spdMult = m.spawnSlowTimer > 0 ? 0.85 : 1.0;
+      m.y += m.speed * spdMult;
+      if (m.spawnSlowTimer > 0) m.spawnSlowTimer--;
+      if (G.lvl >= 3) m.x = clamp(m.x + m.drift, m.w/2 + 4, W - m.w/2 - 4);
+    }
     if (m.flash > 0) m.flash--;
 
-    // ── Bullet collisions ──
+    // Bullet collisions
     for (let j = G.bullets.length - 1; j >= 0; j--) {
       const b = G.bullets[j];
       if (Math.abs(b.x - m.x) < m.w/2 + 4 && Math.abs(b.y - m.y) < m.h/2 + 4) {
-        G.totalShots++;
-        G.lvlShots++;
         if (m.isImposter) {
-          // Correct: shot a red imposter
-          G.totalHits++;
-          G.lvlHits++;
-          const pts = 100 + G.lvl * 18;
-          G.score += pts;
-          G.kills++;
-          burst(m.x, m.y, '#00ff9d', 14);
-          pop(m.x, m.y - 22, '+' + pts, '#00ff9d');
-          triggerSlowDebuff();
-          if (G.upg.pierce >= 1 && b.pierceLeft > 0) {
-            b.pierceLeft--;
-            m.alive = false;
+          // Calculate damage: GradStudent perk = 2 damage, else 1
+          const dmg = G.perks.grad_damage ? 2 : 1;
+          m.hp -= dmg;
+          m.flash = 8;
+
+          if (m.hp <= 0) {
+            // Killed
+            G.totalHits++;
+            G.lvlHits++;
+            let pts = 100 + G.lvl * 18;
+            if (m.mtype === 'elite') pts = Math.round(pts * 1.5);
+            if (m.mtype === 'armored') pts = Math.round(pts * 1.3);
+            if (G.perks.vgame_score) pts *= 2;
+            G.score += pts;
+            G.kills++;
+
+            // Coins
+            let coinDrop = 8 + G.lvl * 2;
+            if (m.mtype === 'elite') coinDrop = Math.round(coinDrop * 1.4);
+            if (m.mtype === 'armored') coinDrop = Math.round(coinDrop * 1.2);
+            if (G.perks.intern_coins) coinDrop = Math.round(coinDrop * 1.5);
+            if (G.perks.savings_coins) coinDrop += 5;
+            G.coins += coinDrop;
+
+            burst(m.x, m.y, '#00ff9d', m.mtype === 'normal' ? 14 : 20);
+            pop(m.x, m.y - 22, '+' + pts, '#00ff9d');
+            triggerSlowDebuff();
+
+            // Doctor life steal
+            if (G.perks.doctor_lifesteal) {
+              G.killsSinceLastHeal++;
+              if (G.killsSinceLastHeal >= 25) {
+                G.killsSinceLastHeal = 0;
+                G.lives = Math.min(G.maxLives, G.lives + 1);
+                showPerkToast('❤ LIFE STEAL: +1 life');
+              }
+            }
+
+            const canPierce = (G.upg.pierce >= 1 || G.perks.laptop_pierce) && b.pierceLeft > 0;
+            if (canPierce) {
+              b.pierceLeft--;
+              m.alive = false;
+            } else {
+              b.alive = false;
+              m.alive = false;
+            }
           } else {
+            // Damaged but alive
+            burst(m.x, m.y, '#ffaa44', 6);
+            pop(m.x, m.y - 18, 'HIT ' + m.hp + '/' + m.maxHp, '#ffaa44');
             b.alive = false;
-            m.alive = false;
           }
         } else {
-          // Shot own member - lose points, no life loss
           b.alive = false;
           m.alive = false;
           const penalty = 50;
           G.score = Math.max(0, G.score - penalty);
           burst(m.x, m.y, '#ff8c00', 8);
-          pop(m.x, m.y - 22, '-' + penalty + ' OWN MEMBER!', '#ff8c00');
+          pop(m.x, m.y - 22, '-' + penalty + ' OWN!', '#ff8c00');
           flash('#ff880022', 200);
           toast('That was your own class member!', 1400);
         }
       }
     }
 
-    // ── Reached player ──
+    // Reached player
     if (!m.alive) { G.members.splice(i, 1); continue; }
     if (m.y + m.h/2 >= G.py - G.ph/2) {
       if (Math.abs(m.x - G.px) < m.w/2 + G.pw/2 - 18) {
         m.alive = false;
         if (m.isImposter) {
-          // Red imposter reached player - lose life
-          doLoseLife('IMPOSTER REACHED YOU', '#ff8c00');
-          doShake(6, 18);
+          // Cat dodge perk
+          if (G.perks.cat_dodge && Math.random() < 0.15) {
+            pop(G.px, G.py - 90, '💨 DODGED!', '#00d4ff');
+          } else {
+            doLoseLife('IMPOSTER REACHED YOU', '#ff8c00');
+            doShake(6, 18);
+          }
           if (G.upg.bomb >= 1) killNearbyImposters(m.x, m.y, 180);
         } else {
-          // Own member docked with player - bonus
           const pts = 60;
           G.score += pts;
           G.lvlDocked++;
           G.dockedMembers.push(m.label);
-          burst(m.x, G.py - G.ph/2, LEVELS[G.lvl].color, 8);
-          pop(m.x, G.py - G.ph/2 - 24, '+' + pts + ' DOCKED', LEVELS[G.lvl].color);
+          burst(m.x, G.py - G.ph/2, G.currentClass.color, 8);
+          pop(m.x, G.py - G.ph/2 - 24, '+' + pts + ' DOCKED', G.currentClass.color);
         }
       }
     }
 
-    // ── Escaped bottom ──
+    // Escaped bottom
     if (!m.alive) { G.members.splice(i, 1); continue; }
     if (m.y - m.h/2 > H + 30) {
       m.alive = false;
       if (m.isImposter) {
-        // Red imposter escaped - lose points (not a life)
         const penalty = 80;
         G.score = Math.max(0, G.score - penalty);
         flash('#ff000022', 200);
         pop(m.x, H - 70, '-' + penalty + ' ESCAPED!', '#ff2244');
-        toast('Imposter escaped! -' + penalty + ' pts', 1600);
       } else {
-        // Own member escaped - no penalty (or auto-dock with magnet)
         if (G.upg.magnet >= 1) {
           G.score += 20;
           G.lvlDocked++;
           G.dockedMembers.push(m.label);
-          pop(W/2, H - 70, 'AUTO-DOCKED +20', LEVELS[G.lvl].color);
+          pop(W/2, H - 70, 'AUTO-DOCKED +20', G.currentClass.color);
         }
-        // else: blue box passes freely, no penalty
       }
     }
-
     if (!m.alive) G.members.splice(i, 1);
   }
 
-  // Remove dead bullets
   G.bullets = G.bullets.filter(b => b.alive !== false);
 
-  // ── Particles ──
+  // Particles
   for (let i = G.particles.length - 1; i >= 0; i--) {
     const p = G.particles[i];
     p.x += p.vx; p.y += p.vy; p.life -= p.decay;
@@ -934,9 +1485,7 @@ function update() {
     if (p.life <= 0) G.particles.splice(i, 1);
   }
 
-  // ── Level complete check ──
-  // Trigger as soon as kill quota is hit - don't wait for screen to clear
-  // (blue bonus boxes would prevent members.length ever reaching 0)
+  // Level complete
   if (G.kills >= G.killsNeeded && G.phase === 'playing') {
     G.phase = 'upgrade_pending';
     setTimeout(() => {
@@ -950,6 +1499,7 @@ function update() {
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
 function doLoseLife(msg, col) {
+  if (G.shieldHP > 0) { G.shieldHP--; pop(G.px, G.py - 90, '🛡 BLOCKED', '#00d4ff'); return; }
   if (G.lives <= 0) return;
   G.lives--;
   flash(col + '44', 280);
@@ -975,23 +1525,29 @@ function killNearbyImposters(cx, cy, r) {
 // ══════════════════════════════════════════
 function doShoot() {
   if (G.bulletCD > 0) return;
-  const cc = LEVELS[G.lvl].color;
+  const cc = G.currentClass.color;
   const bx = G.px, by = G.py - G.ph/2;
-  const pierceLeft = G.upg.pierce >= 1 ? 1 : 0;
+  const hasPierce = G.upg.pierce >= 1 || G.perks.laptop_pierce;
+  const pierceLeft = hasPierce ? 1 : 0;
+  const trackTimer = G.perks.phone_target ? 40 : 0;
 
-  if (G.upg.spread >= 1) {
-    [-30,-15,0,15,30].forEach((a, i) => {
+  const hasSpread = G.upg.spread >= 1 || G.perks.exchange_spread;
+
+  if (hasSpread) {
+    [-30,-15,0,15,30].forEach(a => {
       const rad = a * Math.PI / 180;
-      G.bullets.push({ x:bx, y:by, vx:Math.sin(rad)*11, vy:-Math.cos(rad)*11, alive:true, color:cc, pierceLeft });
+      G.bullets.push({ x:bx, y:by, vx:Math.sin(rad)*11, vy:-Math.cos(rad)*11, alive:true, color:cc, pierceLeft, trackTimer });
     });
   } else if (G.upg.multi >= 1) {
     [-16, 0, 16].forEach(ox => {
-      G.bullets.push({ x:bx+ox, y:by, vx:ox*0.04, vy:-13, alive:true, color:cc, pierceLeft });
+      G.bullets.push({ x:bx+ox, y:by, vx:ox*0.04, vy:-13, alive:true, color:cc, pierceLeft, trackTimer });
     });
   } else {
-    G.bullets.push({ x:bx, y:by, vx:0, vy:-14, alive:true, color:cc, pierceLeft });
+    G.bullets.push({ x:bx, y:by, vx:0, vy:-14, alive:true, color:cc, pierceLeft, trackTimer });
   }
   G.bulletCD = G.bulletCDBase;
+  G.totalShots++;
+  G.lvlShots++;
 }
 
 function doNuke() {
@@ -1000,18 +1556,27 @@ function doNuke() {
   let killed = 0;
   G.members.forEach(m => {
     if (!m.alive || !m.isImposter) return;
-    m.alive = false; killed++; G.kills++; G.totalHits++; G.totalShots++;
-    G.lvlHits++; G.lvlShots++;
+    m.alive = false; killed++; G.kills++; G.totalHits++;
+    G.lvlHits++;
     G.score += 80 + G.lvl * 14;
-    burst(m.x, m.y, LEVELS[G.lvl].color, 16);
+    burst(m.x, m.y, G.currentClass.color, 16);
   });
   flash('#00d4ff22', 350);
-  toast(`☢ SCHEMA NUKE - ${killed} eliminated`, 1600);
+  toast('☢ SCHEMA NUKE: ' + killed + ' eliminated', 1600);
   updateHUD();
 }
 
+function doFreeze() {
+  if (!G.perks.board_freeze || G.phase !== 'playing') return;
+  if (G.freezeUsed) return;
+  G.freezeUsed = true;
+  G.freezeTimer = 180; // 3 seconds
+  flash('#aaeeff22', 300);
+  toast('❄ FREEZE FIELD: 3 seconds', 1600);
+}
+
 function triggerSlowDebuff() {
-  if (G.upg.slow >= 3) G.slowDebuffTimer = 120; // 2 seconds at 60fps
+  if (G.upg.slow >= 3) G.slowDebuffTimer = 120;
 }
 
 function doShake(intensity, duration) {
@@ -1023,7 +1588,7 @@ function doShake(intensity, duration) {
 // SPAWNING
 // ══════════════════════════════════════════
 function spawnMember() {
-  const LD = LEVELS[G.lvl];
+  const LD = G.currentClass;
   const isOwn = Math.random() < 0.45;
   let label;
   if (isOwn) {
@@ -1035,16 +1600,38 @@ function spawnMember() {
   CX.font = '14px "Share Tech Mono",monospace';
   const tw = CX.measureText(label).width + 28;
   const th = 34;
-  const spd = G.D.spd * G.globalSpdMult * G.globalSlowMult * (1 + G.lvl * 0.17)
-              * (1 + G.frame / 700 * 0.1);
+  const slowDebuffMult = G.slowDebuffTimer > 0 ? 0.70 : 1.0;
+  const spd = G.D.spd * G.globalSpdMult * G.globalSlowMult * slowDebuffMult
+              * (1 + G.lvl * 0.17) * (1 + G.frame / 700 * 0.1);
   const margin = tw/2 + 10;
 
-  // Prevent overlapping: try up to 5 positions
   let x, overlap;
   for (let attempt = 0; attempt < 5; attempt++) {
     x = margin + Math.random() * (W - margin * 2);
     overlap = G.members.some(m => m.alive && m.y < 40 && Math.abs(m.x - x) < (m.w + tw) / 2 + 8);
     if (!overlap) break;
+  }
+
+  // Determine HP and type, scaled by difficulty
+  let hp = 1;
+  let mtype = 'normal'; // normal | elite | armored
+  if (!isOwn) {
+    const dk = DIFF_KEY;
+    // Armored chance and minimum level
+    const armorChance = dk === 'easy' ? 0.05 : dk === 'normal' ? 0.08 : dk === 'hard' ? 0.12 : 0.15;
+    const armorMinLvl = dk === 'easy' ? 4 : 0;
+    // Elite chance, minimum level, and 3HP threshold
+    const eliteChance = dk === 'easy' ? 0 : dk === 'normal' ? 0.20 : dk === 'hard' ? 0.25 : 0.30;
+    const eliteMinLvl = dk === 'easy' ? 99 : dk === 'normal' ? 3 : dk === 'hard' ? 2 : 1;
+    const elite3hpLvl = dk === 'easy' ? 99 : dk === 'normal' ? 6 : dk === 'hard' ? 4 : 3;
+
+    if (G.lvl >= armorMinLvl && Math.random() < armorChance) {
+      hp = 2;
+      mtype = 'armored';
+    } else if (G.lvl >= eliteMinLvl && Math.random() < eliteChance) {
+      hp = G.lvl >= elite3hpLvl ? 3 : 2;
+      mtype = 'elite';
+    }
   }
 
   G.members.push({
@@ -1053,11 +1640,15 @@ function spawnMember() {
     label,
     isImposter: !isOwn,
     isBonus: isOwn,
-    speed: spd,
+    speed: spd * (mtype === 'elite' ? 0.85 : 1.0), // elites slightly slower
     alive: true,
     flash: 0,
+    hp,
+    maxHp: hp,
+    mtype,
     drift: G.lvl >= 2 ? (Math.random() - 0.5) * 0.5 : 0,
-    pierceLeft: G.upg.pierce >= 1 ? 1 : 0,
+    pierceLeft: (G.upg.pierce >= 1 || G.perks.laptop_pierce) ? 1 : 0,
+    spawnSlowTimer: G.perks.pizza_slow ? 120 : 0, // 2 seconds at 60fps
   });
 }
 
@@ -1105,7 +1696,6 @@ function draw() {
   drawBg();
   if (!G || G.phase === 'idle') return;
 
-  // Screen shake offset
   let sx = 0, sy = 0;
   if (G.shakeTimer > 0) {
     sx = (Math.random() - 0.5) * G.shakeIntensity * 2;
@@ -1114,12 +1704,12 @@ function draw() {
     CX.translate(sx, sy);
   }
 
-  const LD = LEVELS[Math.min(G.lvl, LEVELS.length-1)];
+  const LD = G.currentClass;
+  if (!LD) { if (G.shakeTimer > 0) CX.restore(); return; }
   const cc = LD.color;
 
-  // ── Laser Sight (passive targeting line) ──
+  // Laser Sight
   if (G.upg.laser >= 1) {
-    const px = G.px;
     const t = Date.now() / 1000;
     CX.save();
     CX.strokeStyle = '#f44';
@@ -1127,18 +1717,23 @@ function draw() {
     CX.shadowColor = '#f44'; CX.shadowBlur = 8;
     CX.globalAlpha = 0.4 + Math.sin(t * 6) * 0.12;
     CX.beginPath();
-    CX.moveTo(px, G.py - G.ph/2 - 10);
-    CX.lineTo(px, 52);
+    CX.moveTo(G.px, G.py - G.ph/2 - 10);
+    CX.lineTo(G.px, 52);
     CX.stroke();
     CX.shadowBlur = 0;
-    // Dot at top
     CX.globalAlpha = 0.8;
     CX.fillStyle = '#f44';
-    CX.beginPath(); CX.arc(px, 52, 3, 0, Math.PI * 2); CX.fill();
+    CX.beginPath(); CX.arc(G.px, 52, 3, 0, Math.PI * 2); CX.fill();
     CX.restore();
   }
 
-  // ── Members (red = imposter, blue = own) ──
+  // Freeze overlay
+  if (G.freezeTimer > 0) {
+    CX.fillStyle = 'rgba(100,200,255,.04)';
+    CX.fillRect(0, 0, W, H);
+  }
+
+  // Members
   G.members.forEach(m => {
     if (!m.alive) return;
     const bx = m.x - m.w/2, by = m.y - m.h/2;
@@ -1146,19 +1741,29 @@ function draw() {
     let col, bgFill;
     if (m.isImposter) {
       col = '#ff2244';
-      bgFill = 'rgba(30,3,9,.93)';
+      bgFill = m.mtype === 'elite' ? 'rgba(40,5,15,.95)' : m.mtype === 'armored' ? 'rgba(25,10,30,.95)' : 'rgba(30,3,9,.93)';
     } else {
       col = '#00d4ff';
       bgFill = 'rgba(0,18,38,.93)';
     }
 
-    CX.shadowColor = col; CX.shadowBlur = m.flash > 0 ? 22 : 8;
+    // Elite pulsing glow
+    const isSpecial = m.isImposter && (m.mtype === 'elite' || m.mtype === 'armored');
+    const pulseGlow = isSpecial ? 12 + Math.sin(Date.now() * 0.006) * 6 : 0;
+
+    CX.shadowColor = col; CX.shadowBlur = (m.flash > 0 ? 22 : 8) + pulseGlow;
     CX.fillStyle = bgFill;
-    CX.strokeStyle = col; CX.lineWidth = m.flash > 0 ? 2.5 : 1.4;
+    CX.strokeStyle = col; CX.lineWidth = isSpecial ? 2.5 : (m.flash > 0 ? 2.5 : 1.4);
     rr(bx, by, m.w, m.h, 5); CX.fill(); CX.stroke();
+
+    // Double border for elite/armored
+    if (isSpecial) {
+      CX.strokeStyle = m.mtype === 'elite' ? '#ff8844' : '#aa66ff';
+      CX.lineWidth = 1;
+      rr(bx - 2, by - 2, m.w + 4, m.h + 4, 7); CX.stroke();
+    }
     CX.shadowBlur = 0;
 
-    // Imposter warning stripes + skull
     if (m.isImposter) {
       CX.save();
       CX.beginPath(); rr(bx, by, m.w, m.h, 5); CX.clip();
@@ -1167,11 +1772,30 @@ function draw() {
       CX.restore();
       CX.fillStyle = '#ff2244'; CX.font = '11px monospace';
       CX.textAlign = 'left'; CX.textBaseline = 'middle';
-      CX.fillText('☠', bx + 5, m.y);
+      const icon = m.mtype === 'armored' ? '🛡' : m.mtype === 'elite' ? '💀' : '☠';
+      CX.fillText(icon, bx + 5, m.y);
+
+      // HP bar for multi-hp enemies
+      if (m.maxHp > 1) {
+        const barW = m.w - 10;
+        const barH = 3;
+        const barX = bx + 5;
+        const barY = by - 6;
+        CX.fillStyle = '#330000';
+        CX.fillRect(barX, barY, barW, barH);
+        CX.fillStyle = m.hp > 1 ? '#ff6644' : '#ff2244';
+        CX.fillRect(barX, barY, barW * (m.hp / m.maxHp), barH);
+      }
     } else {
       CX.fillStyle = '#00d4ff'; CX.font = '11px monospace';
       CX.textAlign = 'left'; CX.textBaseline = 'middle';
       CX.fillText('★', bx + 5, m.y);
+    }
+
+    // Spawn slow visual
+    if (m.spawnSlowTimer > 0) {
+      CX.strokeStyle = 'rgba(255,153,102,.3)'; CX.lineWidth = 1;
+      CX.beginPath(); CX.ellipse(m.x, m.y, m.w/2+4, m.h/2+4, 0, 0, Math.PI*2); CX.stroke();
     }
 
     CX.font = (m.isImposter ? 'bold ' : '') + '14px "Share Tech Mono",monospace';
@@ -1180,7 +1804,7 @@ function draw() {
     CX.fillText(m.label, m.x, m.y);
   });
 
-  // ── Bullets ──
+  // Bullets
   G.bullets.forEach(b => {
     CX.shadowColor = b.color; CX.shadowBlur = 14;
     CX.fillStyle = b.color;
@@ -1190,27 +1814,26 @@ function draw() {
     CX.shadowBlur = 0;
   });
 
-  // ── Player ──
+  // Player
   drawPlayer(cc, LD);
 
-  // ── Reference Panel ──
+  // Reference Panel
   drawRefPanel(LD, cc);
 
-  // ── Shield ring ──
+  // Shield ring
   if (G.shieldHP > 0) {
     CX.strokeStyle = 'rgba(0,212,255,.35)'; CX.lineWidth = 2;
     CX.shadowColor = '#00d4ff'; CX.shadowBlur = 14;
     CX.beginPath();
     CX.ellipse(G.px, G.py, G.pw/2 + 22, G.ph/2 + 22, 0, 0, Math.PI*2);
     CX.stroke(); CX.shadowBlur = 0;
-    // Shield charge count
     CX.font = 'bold 11px "Share Tech Mono",monospace';
     CX.fillStyle = '#00d4ff';
     CX.textAlign = 'center';
     CX.fillText('🛡 x' + G.shieldHP, G.px, G.py + G.ph/2 + 36);
   }
 
-  // ── Slow debuff indicator ──
+  // Slow debuff indicator
   if (G.slowDebuffTimer > 0) {
     CX.font = '10px "Share Tech Mono",monospace';
     CX.fillStyle = '#aaf';
@@ -1218,7 +1841,15 @@ function draw() {
     CX.fillText('⏳ SLOW FIELD ACTIVE', W/2, 50);
   }
 
-  // ── Particles ──
+  // Freeze indicator
+  if (G.freezeTimer > 0) {
+    CX.font = 'bold 12px "Orbitron",monospace';
+    CX.fillStyle = '#aaeeff';
+    CX.textAlign = 'center';
+    CX.fillText('❄ FROZEN: ' + Math.ceil(G.freezeTimer/60) + 's', W/2, 50);
+  }
+
+  // Particles
   G.particles.forEach(p => {
     CX.globalAlpha = Math.max(0, p.life);
     if (p.isText) {
@@ -1237,7 +1868,6 @@ function draw() {
   CX.fillStyle = 'rgba(0,0,0,.055)';
   for (let y = 54; y < H - 40; y += 3) CX.fillRect(0, y, W, 1);
 
-  // End screen shake
   if (G.shakeTimer > 0) CX.restore();
 }
 
@@ -1250,7 +1880,6 @@ function drawPlayer(cc, LD) {
   rr(x, y, G.pw, G.ph, 7); CX.fill(); CX.stroke();
   CX.shadowBlur = 0;
 
-  // header
   const hh = 26;
   CX.fillStyle = cc + '1a'; rr(x, y, G.pw, hh, [7,7,0,0]); CX.fill();
   CX.strokeStyle = cc + '40'; CX.lineWidth = 1;
@@ -1270,9 +1899,8 @@ function drawPlayer(cc, LD) {
   const rh = (G.ph - hh - 10) / 4;
   CX.font = '9px "Share Tech Mono",monospace'; CX.fillStyle = cc + '88'; CX.textAlign = 'left'; CX.textBaseline = 'middle';
   rows.forEach((m, i) => CX.fillText(m, x + 8, y + hh + 8 + i * rh));
-  if (LD.own.length > 3) { CX.fillStyle = cc + '33'; CX.fillText(`+${LD.own.length-3} more…`, x+8, y+hh+8+3*rh); }
+  if (LD.own.length > 3) { CX.fillStyle = cc + '33'; CX.fillText(`+${LD.own.length-3} more...`, x+8, y+hh+8+3*rh); }
 
-  // barrel
   CX.fillStyle = cc; CX.shadowColor = cc; CX.shadowBlur = 10;
   CX.fillRect(G.px - 3, y - 14, 6, 16);
   if (G.bulletCD > G.bulletCDBase - 3) {
@@ -1280,7 +1908,6 @@ function drawPlayer(cc, LD) {
   }
   CX.shadowBlur = 0;
 
-  // thrusters
   [G.px - G.pw*.28, G.px + G.pw*.28].forEach(tx => {
     CX.shadowColor = cc + '88'; CX.shadowBlur = 12;
     const fl = 3 + Math.random() * 4;
@@ -1289,19 +1916,24 @@ function drawPlayer(cc, LD) {
     CX.shadowBlur = 0;
   });
 
-  // nuke hint
   if (G.nukeCharges > 0) {
     CX.fillStyle = '#ff5500'; CX.font = '9px "Share Tech Mono",monospace';
     CX.textAlign = 'center';
-    CX.fillText(`☢×${G.nukeCharges} [N]`, G.px, y + G.ph + 20);
+    CX.fillText('☢x' + G.nukeCharges + ' [N]', G.px, y + G.ph + 20);
+  }
+  if (G.perks.board_freeze && !G.freezeUsed) {
+    CX.fillStyle = '#aaeeff'; CX.font = '9px "Share Tech Mono",monospace';
+    CX.textAlign = 'center';
+    CX.fillText('❄ FREEZE [F]', G.px, y + G.ph + (G.nukeCharges > 0 ? 32 : 20));
   }
 }
 
-// Reference panel fading: L1-3 full, L4-5 attrs only, L6-7 name only, L8 none
 function getRefMode() {
-  if (G.lvl <= 2) return 'full';
-  if (G.lvl <= 4) return 'attrs';
-  if (G.lvl <= 6) return 'name';
+  let bonus = G.perks.library_panel ? 2 : 0;
+  const effectiveLvl = Math.max(0, G.lvl - bonus);
+  if (effectiveLvl <= 2) return 'full';
+  if (effectiveLvl <= 4) return 'attrs';
+  if (effectiveLvl <= 6) return 'name';
   return 'none';
 }
 
@@ -1372,46 +2004,59 @@ function rr(x, y, w, h, r) {
 // HUD
 // ══════════════════════════════════════════
 function updateHUD() {
-  if (!G) return;
-  const LD = LEVELS[Math.min(G.lvl, LEVELS.length-1)];
+  if (!G || !G.currentClass) return;
+  const LD = G.currentClass;
   document.getElementById('h-lv').textContent  = G.lvl + 1;
   document.getElementById('h-cls').textContent = LD.name;
   document.getElementById('h-sc').textContent  = G.score;
-  const spdDisp = (G.D.spd * G.globalSpdMult * G.globalSlowMult * (1+G.lvl*.17)).toFixed(1);
-  document.getElementById('h-spd').textContent = spdDisp + '×';
+  document.getElementById('h-coins').textContent = G.coins;
 
-  // weapon
   let wico = '◈', wname = 'PULSE';
-  if (G.upg.spread >= 1) { wico = '╳'; wname = 'SPREAD'; }
-  else if (G.upg.multi  >= 1) { wico = '⋈'; wname = 'MULTI'; }
-  if (G.upg.pierce >= 1) wname += '+PIERCE';
+  const hasSpread = G.upg.spread >= 1 || G.perks.exchange_spread;
+  if (hasSpread) { wico = '╳'; wname = 'SPREAD'; }
+  else if (G.upg.multi >= 1) { wico = '⋈'; wname = 'MULTI'; }
+  if (G.upg.pierce >= 1 || G.perks.laptop_pierce) wname += '+PIERCE';
   if (G.upg.laser >= 1) wname += '+SIGHT';
   document.getElementById('h-wico').textContent  = wico;
   document.getElementById('h-wname').textContent = wname;
-  document.getElementById('h-ammo').textContent  = G.nukeCharges > 0 ? `☢×${G.nukeCharges}` : '';
 
-  // hearts
   const hv = document.getElementById('h-hearts');
   hv.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < G.maxLives; i++) {
     const s = document.createElement('span');
     s.className = 'heart' + (i >= G.lives ? ' off' : '');
     s.textContent = '♥'; hv.appendChild(s);
   }
 
-  // bottom bar
-  document.getElementById('b-kills').textContent = `${G.kills}/${G.killsNeeded}`;
+  document.getElementById('b-kills').textContent = G.kills + '/' + G.killsNeeded;
   const pct = G.killsNeeded > 0 ? Math.min(100, Math.round(G.kills/G.killsNeeded*100)) : 0;
   document.getElementById('b-pbar').style.width = pct + '%';
   document.getElementById('b-acc').textContent  = accStr();
   const nb = document.getElementById('b-nuke');
   nb.style.display = G.nukeCharges > 0 ? '' : 'none';
-  if (G.nukeCharges > 0) nb.textContent = `☢×${G.nukeCharges} NUKE [N]`;
+  if (G.nukeCharges > 0) nb.textContent = '☢x' + G.nukeCharges + ' NUKE [N]';
 
-  // upgrade strip
+  // Upgrade strip: show perks + upgrades
   const strip = document.getElementById('upg-strip');
   strip.innerHTML = '';
-  UPG_DEFS.forEach(u => {
+  // Perks
+  Object.keys(G.perks).forEach(pk => {
+    if (!G.perks[pk]) return;
+    // Find perk def
+    for (const base of CLASS_TREE) {
+      for (const child of base.children) {
+        if (child.perk.id === pk) {
+          const d = document.createElement('div');
+          d.className = 'upg-icon-el';
+          d.textContent = child.perk.icon;
+          d.title = child.perk.name;
+          strip.appendChild(d);
+        }
+      }
+    }
+  });
+  // Shop upgrades
+  SHOP_DEFS.forEach(u => {
     if (G.upg[u.id] > 0) {
       const d = document.createElement('div');
       d.className = 'upg-icon-el';
@@ -1423,45 +2068,7 @@ function updateHUD() {
 }
 
 // ══════════════════════════════════════════
-// UPGRADE SCREEN
-// ══════════════════════════════════════════
-function showUpgradeScreen() {
-  const stat = G.levelStats[G.levelStats.length - 1];
-  const LD = LEVELS[G.lvl];
-  let summary = `LEVEL ${G.lvl+1} COMPLETE - ${LD.name}`;
-  if (stat) summary += ` | ${stat.acc}% accuracy | ${stat.docked} docked`;
-  document.getElementById('upg-sub').textContent = summary;
-  buildUpgGrid();
-  showLayer('upgrade');
-}
-
-function buildUpgGrid() {
-  const grid = document.getElementById('upg-grid');
-  grid.innerHTML = '';
-  // Filter out maxed upgrades, then pick up to 6
-  const available = UPG_DEFS.filter(u => G.upg[u.id] < u.max);
-  const shuffled = available.sort(() => Math.random() - .5);
-  const chosen = shuffled.slice(0, 6);
-  if (chosen.length === 0) {
-    grid.innerHTML = '<div style="color:#4af;font-size:12px;padding:20px;">All upgrades maxed! Click SKIP to continue.</div>';
-    return;
-  }
-  chosen.forEach(u => {
-    const cur = G.upg[u.id];
-    const card = document.createElement('div');
-    card.className = 'upg-card';
-    card.innerHTML = `
-      <span class="uc-icon">${u.icon}</span>
-      <div class="uc-name">${u.name}${cur>0?` <span style="color:#00d4ff;font-size:13px;font-weight:bold;">Lv${cur} → Lv${cur+1}</span>`:''}</div>
-      <div class="uc-lvl">Tier ${cur+1} / ${u.max}</div>
-      <div class="uc-desc">${u.desc}</div>`;
-    card.addEventListener('click', () => applyUpgrade(u.id));
-    grid.appendChild(card);
-  });
-}
-
-// ══════════════════════════════════════════
-// FLASH / TOAST
+// FLASH / TOAST / PERK TOAST
 // ══════════════════════════════════════════
 function flash(col, dur) {
   const f = document.getElementById('flash');
@@ -1475,9 +2082,16 @@ function toast(msg, dur=1800) {
   clearTimeout(toastTO);
   toastTO = setTimeout(() => t.style.opacity = '0', dur);
 }
+let perkTO;
+function showPerkToast(msg) {
+  const t = document.getElementById('perk-toast');
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(perkTO);
+  perkTO = setTimeout(() => t.style.opacity = '0', 2200);
+}
 
 // ══════════════════════════════════════════
-// BOOT - animated background on start screen
+// BOOT
 // ══════════════════════════════════════════
 (function bootAnim() {
   if (ACTIVE) return;
