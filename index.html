@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UML DEFENDER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:#02080f;
+  --panel:#040d1a;
+  --border:#0a2540;
+  --acc:#00d4ff;
+  --grn:#00ff9d;
+  --red:#ff2244;
+  --amb:#ff8c00;
+  --gold:#ffd700;
+  --dim:#1a4060;
+  --txt:#7ab8d8;
+}
+
+html, body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'Share Tech Mono',monospace; }
+
+canvas { position:fixed; top:0; left:0; z-index:0; }
+
+/* ─── LAYER SYSTEM ─── */
+#ui { position:fixed; inset:0; z-index:10; pointer-events:none; }
+.layer { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:all; }
+.layer.hidden { display:none !important; }
+
+/* ─── SCANLINES ─── */
+#ui::after {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
+}
+
+/* ─── START ─── */
+#layer-start { background:radial-gradient(ellipse 80% 70% at 50% 30%, #030e1f 0%, #000 100%); }
+
+.logo-uml {
+  font-family:'Orbitron',monospace; font-weight:900;
+  font-size:clamp(72px,14vw,140px); line-height:1;
+  background:linear-gradient(160deg,#fff 0%,var(--acc) 45%,#004080 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(0,212,255,.5));
+  letter-spacing:.08em; animation:logoBreath 3s ease-in-out infinite;
+}
+@keyframes logoBreath {
+  0%,100% { filter:drop-shadow(0 0 30px rgba(0,212,255,.4)); }
+  50% { filter:drop-shadow(0 0 60px rgba(0,212,255,.7)); }
+}
+.logo-def {
+  font-family:'Orbitron',monospace; font-weight:400; letter-spacing:.7em;
+  font-size:clamp(12px,2.5vw,22px); color:#1a5a7a; margin-top:6px; margin-bottom:36px;
+}
+.logo-tag {
+  font-family:'VT323',monospace; font-size:clamp(13px,2vw,18px);
+  color:#0a3a5a; letter-spacing:.3em; margin-bottom:40px;
+}
+
+/* ─── DIFF SELECTOR ─── */
+.diff-row { display:flex; gap:10px; margin-bottom:16px; }
+.diff-btn {
+  flex:1; padding:11px 18px; background:transparent; border:1px solid var(--dim);
+  color:#2a6080; font-family:'Orbitron',monospace; font-size:10px; letter-spacing:.2em;
+  cursor:pointer; transition:all .15s; min-width:80px;
+}
+.diff-btn:hover { border-color:var(--acc); color:var(--acc); }
+.diff-btn.sel-easy   { border-color:var(--grn); color:var(--grn); background:rgba(0,255,157,.05); }
+.diff-btn.sel-normal { border-color:var(--acc); color:var(--acc); background:rgba(0,212,255,.05); }
+.diff-btn.sel-hard   { border-color:var(--amb); color:var(--amb); background:rgba(255,140,0,.05); }
+.diff-btn.sel-insane { border-color:var(--red); color:var(--red); background:rgba(255,34,68,.05); }
+
+/* ─── CARD / MENU BOX ─── */
+.card {
+  background:rgba(2,12,26,.9); border:1px solid var(--border);
+  padding:30px 40px; min-width:340px; position:relative;
+  box-shadow:0 0 80px rgba(0,80,160,.08), inset 0 1px 0 rgba(0,212,255,.05);
+}
+.card-label {
+  position:absolute; top:-9px; left:20px; font-size:9px; letter-spacing:.25em;
+  color:var(--dim); background:rgba(2,12,26,1); padding:0 8px;
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  width:100%; padding:13px 20px; background:transparent; border:1px solid var(--dim);
+  color:var(--txt); font-family:'Orbitron',monospace; font-size:12px; font-weight:700;
+  letter-spacing:.18em; cursor:pointer; transition:all .15s; text-align:center; margin-bottom:10px;
+  position:relative; overflow:hidden;
+}
+.btn:last-child { margin-bottom:0; }
+.btn::after { content:''; position:absolute; inset:0; background:currentColor; opacity:0; transition:opacity .15s; }
+.btn:hover { border-color:var(--acc); color:var(--acc); }
+.btn:hover::after { opacity:.04; }
+.btn.primary { border-color:var(--grn); color:var(--grn); }
+.btn.primary:hover { background:rgba(0,255,157,.08); box-shadow:0 0 20px rgba(0,255,157,.2); }
+.btn.warn { border-color:var(--red); color:var(--red); }
+.btn.warn:hover { background:rgba(255,34,68,.08); }
+
+/* ─── HUD ─── */
+#hud {
+  position:fixed; top:0; left:0; right:0; height:54px; z-index:20;
+  background:rgba(0,0,0,.92); border-bottom:1px solid #050e1c;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 18px; display:none;
+}
+.hud-cell { display:flex; flex-direction:column; align-items:center; gap:1px; }
+.hud-lbl { font-size:7px; color:var(--dim); letter-spacing:.25em; }
+.hud-val { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--acc); white-space:nowrap; }
+.hud-val.g { color:var(--grn); }
+.hud-val.o { color:var(--amb); }
+.hud-val.r { color:var(--red); }
+.hearts { display:flex; gap:5px; }
+.heart { font-size:15px; color:var(--red); filter:drop-shadow(0 0 4px var(--red)); transition:all .2s; }
+.heart.off { color:#1a0808; filter:none; }
+
+/* ─── BOTTOM BAR ─── */
+#bot-bar {
+  position:fixed; bottom:0; left:0; right:0; height:40px; z-index:20;
+  background:rgba(0,0,0,.92); border-top:1px solid #050e1c;
+  display:flex; align-items:center; justify-content:center; gap:28px;
+  font-size:10px; color:var(--dim); display:none; letter-spacing:.1em;
+}
+.bot-val { color:var(--acc); }
+.pbar { width:140px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+.pbar-fill { height:100%; background:linear-gradient(90deg,var(--acc),var(--grn)); border-radius:2px; transition:width .3s; }
+
+/* ─── UPGRADE ICONS ─── */
+#upg-strip {
+  position:fixed; left:10px; top:62px; z-index:20;
+  display:flex; flex-direction:column; gap:5px; display:none;
+}
+.upg-icon-el { font-size:16px; opacity:.75; cursor:default; }
+
+/* ─── PAUSE ─── */
+#layer-pause { background:rgba(0,0,0,.85); backdrop-filter:blur(6px); }
+#layer-pause h2 {
+  font-family:'Orbitron',monospace; font-size:clamp(30px,5vw,54px);
+  color:var(--acc); letter-spacing:.3em; text-shadow:0 0 40px var(--acc); margin-bottom:32px;
+}
+
+/* ─── ANNOUNCE ─── */
+#layer-announce { background:transparent; pointer-events:none; }
+.ann-box {
+  text-align:center; padding:28px 56px; border:1px solid currentColor;
+  background:rgba(0,0,0,.75); animation:annIn .35s ease-out;
+}
+@keyframes annIn { from { opacity:0; transform:scale(.88) translateY(-10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+#ann-lv { font-family:'Orbitron',monospace; font-size:clamp(34px,7vw,72px); font-weight:900; letter-spacing:.15em; }
+#ann-name { font-family:'VT323',monospace; font-size:clamp(22px,4vw,40px); letter-spacing:.25em; margin-top:-4px; }
+#ann-desc { font-size:11px; color:#3a7090; letter-spacing:.12em; margin-top:8px; }
+
+/* ─── UPGRADE SCREEN ─── */
+#layer-upgrade { background:rgba(0,0,0,.94); }
+#layer-upgrade h2 {
+  font-family:'Orbitron',monospace; font-size:clamp(18px,3vw,32px);
+  color:var(--gold); letter-spacing:.2em; text-shadow:0 0 24px var(--gold); margin-bottom:4px;
+}
+.upg-sub { font-size:10px; color:#2a5a2a; letter-spacing:.18em; margin-bottom:24px; }
+.upg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:680px; width:100%; }
+.upg-card {
+  border:1px solid var(--border); background:rgba(2,10,22,.95);
+  padding:18px 14px; cursor:pointer; transition:all .18s; position:relative;
+}
+.upg-card:not(.maxed):hover { border-color:var(--gold); box-shadow:0 0 20px rgba(255,215,0,.12); }
+.upg-card .uc-icon { font-size:24px; margin-bottom:8px; display:block; }
+.upg-card .uc-name { font-family:'Orbitron',monospace; font-size:10px; color:var(--gold); letter-spacing:.12em; margin-bottom:5px; }
+.upg-card .uc-lvl { font-size:9px; color:#2a5a2a; }
+.upg-card .uc-desc { font-size:9px; color:#2a5070; line-height:1.6; margin-top:5px; }
+.upg-card.maxed { border-color:#0d1f2a; cursor:default; opacity:.5; }
+.upg-card.maxed::after { content:'MAX'; position:absolute; top:6px; right:8px; font-size:8px; color:#1a3a5a; letter-spacing:.1em; }
+.upg-skip { margin-top:16px; font-size:10px; color:#0a2a3a; cursor:pointer; letter-spacing:.15em; transition:color .15s; }
+.upg-skip:hover { color:var(--acc); }
+
+/* ─── GAME OVER / WIN ─── */
+#layer-over { background:rgba(0,0,0,.96); }
+#over-title { font-family:'Orbitron',monospace; font-size:clamp(36px,8vw,90px); font-weight:900; letter-spacing:.12em; margin-bottom:12px; }
+#over-stats { font-size:12px; color:#2a5a6a; letter-spacing:.12em; line-height:2.2; text-align:center; margin-bottom:6px; }
+#over-score { font-family:'Orbitron',monospace; font-size:clamp(20px,4vw,44px); color:var(--grn); text-shadow:0 0 30px var(--grn); margin:18px 0 28px; }
+
+/* ─── HOWTO ─── */
+#layer-howto { background:rgba(0,0,0,.97); }
+#layer-howto .hw-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:540px; margin:16px 0 24px; }
+#layer-howto .hw-item { font-size:11px; color:#2a5a6a; line-height:1.8; }
+#layer-howto .hw-item span { display:block; font-family:'Orbitron',monospace; font-size:9px; color:var(--acc); letter-spacing:.15em; margin-bottom:4px; }
+
+/* ─── FLASH / TOAST ─── */
+#flash { position:fixed; inset:0; z-index:30; pointer-events:none; opacity:0; transition:opacity .08s; }
+#toast {
+  position:fixed; top:62px; left:50%; transform:translateX(-50%);
+  font-family:'Orbitron',monospace; font-size:11px; letter-spacing:.15em;
+  color:var(--gold); text-shadow:0 0 16px var(--gold); z-index:25;
+  opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap;
+}
+
+/* ─── MISC ─── */
+.sep { width:100%; height:1px; background:var(--border); margin:12px 0; }
+.sec-lbl { font-size:8px; color:var(--dim); letter-spacing:.25em; margin-bottom:8px; display:block; }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div id="flash"></div>
+<div id="toast"></div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-cell"><div class="hud-lbl">LEVEL</div><div class="hud-val o" id="h-lv">1</div></div>
+  <div class="hud-cell"><div class="hud-lbl">CLASS</div><div class="hud-val" id="h-cls">—</div></div>
+  <div class="hud-cell"><div class="hud-lbl">SCORE</div><div class="hud-val g" id="h-sc">0</div></div>
+  <div class="hud-cell">
+    <div class="hud-lbl">WEAPON</div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <span id="h-wico" style="font-size:16px;">◈</span>
+      <div><div class="hud-val" style="font-size:11px;" id="h-wname">PULSE</div><div style="font-size:9px;color:#1a5a2a;" id="h-ammo"></div></div>
+    </div>
+  </div>
+  <div class="hud-cell"><div class="hud-lbl">SPEED</div><div class="hud-val" id="h-spd">1.0×</div></div>
+  <div class="hud-cell" style="border-left:1px solid #0a2540;padding-left:14px;">
+    <div style="font-size:8px;color:#00d4ff;letter-spacing:.1em;">🔵 BLUE = YOURS</div>
+    <div style="font-size:8px;color:#ff2244;letter-spacing:.1em;margin-top:2px;">🔴 RED = SHOOT</div>
+  </div>
+  <div class="hud-cell"><div class="hud-lbl">LIVES</div><div class="hearts" id="h-hearts"></div></div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div id="bot-bar">
+  <span>KILLS <span class="bot-val" id="b-kills">0/0</span></span>
+  <span>PROGRESS <div class="pbar"><div class="pbar-fill" id="b-pbar" style="width:0%"></div></div></span>
+  <span>ACCURACY <span class="bot-val" id="b-acc">-</span></span>
+  <span style="color:#ff2244;">🔴 SHOOT RED</span>
+  <span style="color:#00d4ff;">🔵 LET BLUE PASS</span>
+  <span id="b-nuke" style="display:none;color:#ff4400;">☢ NUKE [N]</span>
+</div>
+
+<!-- UPGRADE ICONS STRIP -->
+<div id="upg-strip"></div>
+
+<!-- UI LAYERS -->
+<div id="ui">
+
+  <!-- START -->
+  <div id="layer-start" class="layer">
+    <div class="logo-uml">UML</div>
+    <div class="logo-def">DEFENDER</div>
+    <div class="logo-tag">::  PROTECT THE SCHEMA  ::</div>
+    <div class="card" style="min-width:360px;">
+      <div class="card-label">MISSION SELECT</div>
+      <span class="sec-lbl">DIFFICULTY</span>
+      <div class="diff-row">
+        <button class="diff-btn" id="d-easy"   onclick="selDiff('easy')">EASY</button>
+        <button class="diff-btn sel-normal" id="d-normal" onclick="selDiff('normal')">NORMAL</button>
+        <button class="diff-btn" id="d-hard"   onclick="selDiff('hard')">HARD</button>
+        <button class="diff-btn" id="d-insane" onclick="selDiff('insane')">INSANE</button>
+      </div>
+      <div class="sep"></div>
+      <button class="btn primary" onclick="startGame()">▶  INITIALIZE SYSTEM</button>
+      <button class="btn" onclick="showLayer('howto')">?  HOW TO PLAY</button>
+    </div>
+    <div style="margin-top:18px;font-size:9px;color:#0a2030;letter-spacing:.2em;">← → MOVE &nbsp;·&nbsp; SPACE SHOOT &nbsp;·&nbsp; N NUKE &nbsp;·&nbsp; ESC PAUSE</div>
+  </div>
+
+  <!-- HOW TO PLAY -->
+  <div id="layer-howto" class="layer hidden">
+    <div class="card" style="max-width:560px;">
+      <div class="card-label">PROTOCOL</div>
+      <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--acc);letter-spacing:.2em;margin-bottom:16px;">HOW TO PLAY</div>
+      <div class="hw-grid">
+        <div class="hw-item"><span>YOU ARE</span>A UML class node. Color-coded members fall from above.</div>
+        <div class="hw-item"><span>🔴 RED = SHOOT</span>Members that <b style="color:#ff2244">DON'T BELONG</b> to your class are marked red with a ☠ skull. Shoot them!</div>
+        <div class="hw-item"><span>🔵 BLUE = LET PASS</span>Members that <b style="color:#00d4ff">BELONG</b> to your class are marked blue with a ★ star. Let them dock safely.</div>
+        <div class="hw-item"><span>8 LEVELS</span>Each level is a new UML class. The reference panel fades as you progress. By level 8 you're on your own!</div>
+        <div class="hw-item"><span>UPGRADES</span>Between levels choose upgrades: speed, weapons, shields, laser sight, nukes and more.</div>
+      </div>
+      <button class="btn primary" onclick="showLayer('start')">◈  BACK</button>
+    </div>
+  </div>
+
+  <!-- PAUSE -->
+  <div id="layer-pause" class="layer hidden">
+    <h2>PAUSED</h2>
+    <div class="card" style="min-width:300px;">
+      <button class="btn primary" onclick="resume()">▶  RESUME</button>
+      <button class="btn" onclick="restartLevel()">↺  RESTART LEVEL</button>
+      <button class="btn warn" onclick="toMenu()">✕  MAIN MENU</button>
+    </div>
+    <div style="margin-top:14px;font-size:9px;color:#0a2030;letter-spacing:.2em;">ESC TO RESUME</div>
+  </div>
+
+  <!-- LEVEL ANNOUNCE -->
+  <div id="layer-announce" class="layer hidden">
+    <div class="ann-box" id="ann-box">
+      <div id="ann-lv">LEVEL 1</div>
+      <div id="ann-name">Animal</div>
+      <div id="ann-desc">Abstract base of all living creatures</div>
+    </div>
+  </div>
+
+  <!-- UPGRADE -->
+  <div id="layer-upgrade" class="layer hidden">
+    <h2>◈ ENHANCEMENT</h2>
+    <div class="upg-sub" id="upg-sub">LEVEL COMPLETE - SELECT AN UPGRADE</div>
+    <div class="upg-grid" id="upg-grid"></div>
+    <div class="upg-skip" onclick="skipUpgrade()">[ skip - continue without upgrade ]</div>
+  </div>
+
+  <!-- GAME OVER / WIN -->
+  <div id="layer-over" class="layer hidden">
+    <div id="over-title">CORRUPTED</div>
+    <div id="over-stats"></div>
+    <div id="over-score">0</div>
+    <div class="card" style="min-width:300px;">
+      <button class="btn primary" onclick="fullRestart()">▶  PLAY AGAIN</button>
+      <button class="btn" onclick="toMenu()">←  MAIN MENU</button>
+    </div>
+  </div>
+
+</div><!-- /ui -->
+
+<script>
+'use strict';
+// ══════════════════════════════════════════
+// CANVAS
+// ══════════════════════════════════════════
+const CVS = document.getElementById('c');
+const CX  = CVS.getContext('2d');
+let W = 0, H = 0;
+function resize() { W = CVS.width = window.innerWidth; H = CVS.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+// ══════════════════════════════════════════
+// LEVEL DATA
+// ══════════════════════════════════════════
+// ── LEVEL THEMES ─────────────────────────────────────────────────────
+// Each level has a unique color palette applied to background/HUD/stars
+const LEVEL_THEMES = [
+  { bg:'#01060f', grid:'rgba(0,50,100,.06)',  star:'80,160,220' },  // L1 cool blue
+  { bg:'#0a0610', grid:'rgba(60,0,100,.07)', star:'160,80,220' },  // L2 deep purple
+  { bg:'#0a0400', grid:'rgba(100,40,0,.07)', star:'220,120,40' },  // L3 amber
+  { bg:'#000a06', grid:'rgba(0,80,30,.07)',  star:'60,200,100' },  // L4 matrix green
+  { bg:'#0a0000', grid:'rgba(100,0,0,.06)',  star:'220,60,60' },   // L5 crimson
+  { bg:'#06000a', grid:'rgba(80,0,80,.06)',  star:'180,60,180' },  // L6 magenta
+  { bg:'#0a0800', grid:'rgba(100,80,0,.06)', star:'220,200,40' },  // L7 gold
+  { bg:'#050008', grid:'rgba(60,0,80,.07)',  star:'140,40,200' },  // L8 violet
+];
+
+const LEVELS = [
+  {
+    name:'Animal', color:'#00d4ff', stereo:'<<abstract>>',
+    desc:'Base class of all living creatures',
+    own:['- name: String','- age: int','+ eat(): void','+ move(): void','+ makeSound(): void'],
+    bad:['- studentId: int','+ enroll(): void','- salary: double','+ clockIn(): void',
+         '- isbn: String','+ checkout(): void','- plateNo: String','+ refuel(): void',
+         '- balance: float','+ withdraw(): bool','- resolution: int','+ capture(): void',
+         '- floor: int','+ goUp(): void','- paperCount: int','+ print(): void',
+         '+ scan(): void','- ipAddress: String','+ connect(): void']
+  },
+  {
+    name:'BankAccount', color:'#f0a830', stereo:'',
+    desc:'Manages financial transactions',
+    own:['- accountId: int','- balance: double','- owner: String','+ deposit(amt): void',
+         '+ withdraw(amt): bool','+ getBalance(): double'],
+    bad:['- breed: String','+ bark(): void','- wingspan: float','+ fly(): void',
+         '- engineCC: int','+ accelerate(): void','- isbn: String','+ borrow(): void',
+         '- grade: char','+ submitAssignment(): void','- floor: int','+ goDown(): void',
+         '- seatNo: String','+ reserve(): void','- temp: float','+ setTemp(t): void',
+         '+ calibrate(): void','- reading: float','+ dismiss(): void']
+  },
+  {
+    name:'Student', color:'#c060ff', stereo:'',
+    desc:'Represents a university student',
+    own:['- studentId: int','- name: String','- gpa: float','- major: String',
+         '+ enroll(course): void','+ submitAssignment(): void','+ getGPA(): float'],
+    bad:['- balance: double','+ withdraw(): bool','- breed: String','+ fetch(): void',
+         '- salary: double','+ clockIn(): void','- plateNo: String','+ refuel(): void',
+         '- orderId: int','+ ship(): void','+ cancel(): void','- flightNo: String',
+         '+ board(): void','- cashReserve: double','+ dispenseCash(): void',
+         '- items: List','+ addItem(): void','+ calculateTotal(): double']
+  },
+  {
+    name:'Vehicle', color:'#ff6b35', stereo:'',
+    desc:'Any motorized transport entity',
+    own:['- plateNo: String','- engineCC: int','- fuelLevel: float','- brand: String',
+         '+ accelerate(): void','+ brake(): void','+ refuel(liters): void'],
+    bad:['- gpa: float','+ enroll(): void','- isbn: String','+ checkout(): void',
+         '- salary: double','+ promote(): void','- balance: double','+ deposit(): void',
+         '- ingredients: List','+ cook(): void','- songs: List','+ shuffle(): void',
+         '- priority: int','+ snooze(): void','- message: String','+ dismiss(): void',
+         '+ addEvent(): void','- events: List']
+  },
+  {
+    name:'Book', color:'#00ff9d', stereo:'',
+    desc:'A library catalog entity',
+    own:['- isbn: String','- title: String','- author: String','- pageCount: int',
+         '- available: bool','+ checkout(user): void','+ returnBook(): void','+ getInfo(): String'],
+    bad:['- plateNo: String','+ accelerate(): void','- health: int','+ attack(): void',
+         '+ defend(): void','- level: int','+ respawn(): void','- bandwidth: int',
+         '+ disconnect(): void','- inkLevel: float','+ scan(): void',
+         '- altitude: float','+ delay(min): void','- gate: String',
+         '- capacity: int','+ goUp(): void','+ goDown(): void']
+  },
+  {
+    name:'Employee', color:'#ff3c7e', stereo:'',
+    desc:'HR system employee record',
+    own:['- empId: int','- name: String','- salary: double','- department: String',
+         '- hireDate: String','+ clockIn(): void','+ clockOut(): void',
+         '+ getSalary(): double','+ promote(title): void'],
+    bad:['- isbn: String','+ returnBook(): void','- breed: String','+ fetch(): void',
+         '- plateNo: String','+ brake(): void','- resolution: int','+ zoom(x): void',
+         '+ capture(): void','- flash: bool','- servings: int','+ cook(): void',
+         '- prepTime: int','+ addIngredient(): void','- model: String',
+         '+ train(): void','+ reply(msg): String']
+  },
+  {
+    name:'Dog', color:'#ffd700', stereo:'extends Animal',
+    desc:'Loyal subclass of Animal',
+    own:['- breed: String','- isLoyal: bool','- weight: float',
+         '+ bark(): void','+ fetch(): void','+ makeSound(): void','+ sit(): void'],
+    bad:['- empId: int','+ clockOut(): void','- balance: double','+ getBalance(): double',
+         '- isbn: String','+ getInfo(): String','- flightNo: String','+ board(): void',
+         '- seatNo: String','+ cancel(): void','- price: double','+ reserve(): void',
+         '- timezone: String','+ addEvent(): void','- orderId: int','+ track(): String',
+         '+ ship(): void','- status: String']
+  },
+  {
+    name:'Hospital', color:'#ff4fa0', stereo:'<<system>>',
+    desc:'Healthcare facility management system',
+    own:['- hospitalId: int','- name: String','- capacity: int','- location: String',
+         '+ admitPatient(p): void','+ dischargePatient(p): void',
+         '+ getAvailableBeds(): int','+ findDoctor(spec): Doctor'],
+    bad:['- isbn: String','+ shuffle(): void','- breed: String','+ sit(): void',
+         '- plateNo: String','+ brake(): void','- gpa: float','+ submitAssignment(): void',
+         '- health: int','+ respawn(): void','+ attack(): void','- songs: List',
+         '+ addSong(): void','- duration: int','- subject: String','+ send(): void',
+         '+ reply(): void','- recipient: String','- discount: float',
+         '+ removeItem(): void']
+  },
+];
+
+// ══════════════════════════════════════════
+// DIFFICULTY
+// ══════════════════════════════════════════
+const DIFFS = {
+  easy:   { lives:5, spd:0.85, spawnBase:135, spawnFloor:55, ramp:1.07, label:'EASY' },
+  normal: { lives:3, spd:1.25, spawnBase:105, spawnFloor:36, ramp:1.13, label:'NORMAL' },
+  hard:   { lives:2, spd:1.70, spawnBase:80,  spawnFloor:24, ramp:1.19, label:'HARD' },
+  insane: { lives:1, spd:2.30, spawnBase:55,  spawnFloor:15, ramp:1.26, label:'INSANE' },
+};
+let DIFF_KEY = 'normal';
+
+function selDiff(k) {
+  DIFF_KEY = k;
+  ['easy','normal','hard','insane'].forEach(d => {
+    const el = document.getElementById('d-'+d);
+    el.className = 'diff-btn' + (d===k ? ' sel-'+d : '');
+  });
+}
+
+// ══════════════════════════════════════════
+// UPGRADE DEFINITIONS
+// ══════════════════════════════════════════
+const UPG_DEFS = [
+  { id:'speed',    icon:'⚡', name:'OVERCLOCK',   max:3, desc:'Player move speed +35% per level' },
+  { id:'fire',     icon:'🔫', name:'RAPID FIRE',  max:3, desc:'Bullet cooldown -28% per level' },
+  { id:'multi',    icon:'⋈',  name:'MULTI-SHOT',  max:1, desc:'Fire 3 bullets simultaneously' },
+  { id:'spread',   icon:'╳',  name:'SPREAD SHOT', max:1, desc:'Fire 5 bullets in wide arc' },
+  { id:'laser',    icon:'🔴', name:'LASER SIGHT',  max:1, desc:'Shows a targeting line where your shots will land' },
+  { id:'shield',   icon:'🛡', name:'FIREWALL',    max:2, desc:'+1 absorb charge per level' },
+  { id:'slow',     icon:'⏳', name:'TIME DILATION',max:3, desc:'T1: -15% speed, T2: -22%, T3: kills slow 30% for 2s' },
+  { id:'nuke',     icon:'☢',  name:'SCHEMA NUKE', max:3, desc:'+1 nuke charge usable each level' },
+  { id:'magnet',   icon:'⊕',  name:'DATA MAGNET', max:1, desc:'Own members that escape auto-dock for +20 pts (reduced)' },
+  { id:'regen',    icon:'♥',  name:'REGEN PATCH', max:2, desc:'+1 life restored (max 5)' },
+  { id:'pierce',   icon:'◐',  name:'PIERCE SHOT', max:1, desc:'Bullets pass through 2 enemies' },
+  { id:'bomb',     icon:'💥', name:'PROXIMITY BOMB',max:2, desc:'Kills all imposters in kill zone on dock' },
+];
+
+// ══════════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════════
+let G = null; // initialized in initGame
+let RAF = null;
+let ACTIVE = false; // is game loop running
+let PAUSED = false;
+
+function initGame() {
+  const D = DIFFS[DIFF_KEY];
+  G = {
+    D,
+    lvl:    0,
+    lives:  D.lives,
+    score:  0,
+    kills:  0,
+    totalShots:  0,
+    totalHits:   0,
+    frame:  0,
+    phase:  'idle', // idle | announce | playing | upgrade | over
+
+    // player
+    px: W / 2,
+    py: 0, // set in startLevel
+    pw: 230,
+    ph: 84,
+
+    // entity lists
+    bullets:   [],
+    members:   [],
+    particles: [],
+
+    // spawn
+    spawnTimer:    60,
+    spawnInterval: D.spawnBase,
+    killsNeeded:   0,
+
+    // upgrades
+    upg: {},
+
+    // derived (recalc each level/upgrade)
+    playerSpd:    5.5,
+    bulletCD:     0,
+    bulletCDBase: 18,
+    shieldHP:     0,
+    nukeCharges:  0,
+    globalSlowMult: 1.0,
+    globalSpdMult:  1.0, // ramps per wave inside level
+
+    // Time Dilation T3 slow debuff
+    slowDebuffTimer: 0,
+
+    // Screen shake
+    shakeTimer: 0,
+    shakeIntensity: 0,
+
+    // Tracking
+    dockedMembers: [],
+    levelStats: [],   // { level, kills, shots, hits, docked }
+    lvlShots: 0,
+    lvlHits: 0,
+    lvlDocked: 0,
+
+    // Laser tick limiter (unused - laser is now passive sight)
+    // laserTickCD: 0,
+
+    // input
+    keys: {},
+    shotLocked: false, // prevent auto-fire on laser
+  };
+  UPG_DEFS.forEach(u => G.upg[u.id] = 0);
+  G.py = H - G.ph / 2 - 55;
+}
+
+function recalcStats() {
+  const u = G.upg;
+  G.playerSpd    = 5.5 + u.speed * 1.8;
+  G.bulletCDBase = Math.max(6, 18 - u.fire * 5);
+  // Time Dilation: T1=15%, T2=22%, T3=22% base (30% burst handled in update)
+  const slowPct = u.slow >= 2 ? 0.22 : u.slow >= 1 ? 0.15 : 0;
+  G.globalSlowMult = Math.max(0.35, 1 - slowPct);
+  // shield resets per level
+  G.shieldHP = u.shield;
+}
+
+const KILLS_PER_LEVEL = [10, 14, 18, 22, 26, 30, 34, 36];
+function killsForLevel(lv) { return KILLS_PER_LEVEL[lv] ?? 44; }
+
+// ══════════════════════════════════════════
+// LAYER MANAGEMENT
+// ══════════════════════════════════════════
+const LAYERS = ['start','howto','pause','announce','upgrade','over'];
+function showLayer(name) {
+  LAYERS.forEach(l => {
+    const el = document.getElementById('layer-'+l);
+    el.classList.toggle('hidden', l !== name);
+  });
+}
+function hideAllLayers() {
+  LAYERS.forEach(l => document.getElementById('layer-'+l).classList.add('hidden'));
+}
+
+// ══════════════════════════════════════════
+// FLOW CONTROL
+// ══════════════════════════════════════════
+function startGame() {
+  initGame();
+  document.getElementById('hud').style.display       = 'flex';
+  document.getElementById('bot-bar').style.display   = 'flex';
+  document.getElementById('upg-strip').style.display = 'flex';
+  beginLevel();
+}
+
+function beginLevel() {
+  G.phase = 'announce';
+  recalcStats();
+  G.shieldHP    = G.upg.shield;
+  G.nukeCharges += G.upg.nuke;
+  G.kills       = 0;
+  G.killsNeeded = killsForLevel(G.lvl);
+  G.frame       = 0;
+  G.globalSpdMult = 1.0;
+  G.spawnTimer    = 80;
+  G.spawnInterval = G.D.spawnBase;
+  G.bullets = [];
+  G.members = [];
+  G.particles = [];
+  G.bulletCD = 0;
+  G.slowDebuffTimer = 0;
+  G.shakeTimer = 0;
+  G.lvlShots = 0;
+  G.lvlHits = 0;
+  G.lvlDocked = 0;
+
+  // Announce
+  const LD = LEVELS[G.lvl];
+  document.getElementById('ann-lv').textContent   = 'LEVEL ' + (G.lvl + 1);
+  document.getElementById('ann-name').textContent = LD.name;
+  document.getElementById('ann-desc').textContent = LD.desc;
+  document.getElementById('ann-lv').style.color   = LD.color;
+  document.getElementById('ann-name').style.color = LD.color + 'cc';
+  document.getElementById('ann-box').style.borderColor = LD.color;
+  document.getElementById('ann-box').style.color  = LD.color;
+  showLayer('announce');
+
+  if (!ACTIVE) { ACTIVE = true; RAF = requestAnimationFrame(loop); }
+
+  setTimeout(() => {
+    if (G.phase !== 'announce') return; // aborted
+    hideAllLayers();
+    G.phase = 'playing';
+    updateHUD();
+  }, 2400);
+}
+
+function levelDone() {
+  // Save level stats
+  G.levelStats.push({
+    level: G.lvl,
+    name: LEVELS[G.lvl].name,
+    kills: G.kills,
+    shots: G.lvlShots,
+    hits: G.lvlHits,
+    docked: G.lvlDocked,
+    acc: G.lvlShots > 0 ? Math.round(G.lvlHits / G.lvlShots * 100) : 0
+  });
+  G.members = [];
+  G.bullets = [];
+
+  // Last level? Go straight to win
+  if (G.lvl + 1 >= LEVELS.length) {
+    doWin();
+    return;
+  }
+
+  G.phase = 'upgrade';
+  showUpgradeScreen();
+}
+
+function skipUpgrade() {
+  proceedNextLevel();
+}
+
+function applyUpgrade(id) {
+  const def = UPG_DEFS.find(u => u.id === id);
+  if (!def || G.upg[id] >= def.max) return;
+  G.upg[id]++;
+  if (id === 'regen') { G.lives = Math.min(5, G.lives + 1); }
+  proceedNextLevel();
+}
+
+function proceedNextLevel() {
+  hideAllLayers();
+  G.lvl++;
+  if (G.lvl >= LEVELS.length) { doWin(); return; }
+  beginLevel();
+}
+
+function gameOver() {
+  if (G.phase === 'over') return;
+  G.phase = 'over';
+  stopLoop();
+  const t = document.getElementById('over-title');
+  t.textContent = 'CORRUPTED';
+  t.style.color = 'var(--red)';
+  t.style.textShadow = '0 0 40px var(--red)';
+  document.getElementById('over-stats').innerHTML =
+    `<div style="font-size:18px;margin-bottom:8px;">Died on Level ${G.lvl+1} - ${LEVELS[G.lvl].name}</div>` +
+    `Accuracy: ${accStr()} &nbsp;·&nbsp; Kills: ${G.kills}<br>` +
+    `Members docked: ${G.dockedMembers.length}` +
+    buildLevelBreakdown();
+  document.getElementById('over-score').textContent = 'SCORE: ' + G.score;
+  showLayer('over');
+}
+
+function doWin() {
+  G.phase = 'over';
+  stopLoop();
+  const t = document.getElementById('over-title');
+  t.textContent = 'SECURED';
+  t.style.color = 'var(--grn)';
+  t.style.textShadow = '0 0 40px var(--grn)';
+  document.getElementById('over-stats').innerHTML =
+    `<div style="font-size:16px;margin-bottom:6px;">All 8 classes defended - System integrity: INTACT</div>` +
+    `Accuracy: ${accStr()} &nbsp;·&nbsp; Total Kills: ${G.totalHits}<br>` +
+    `Members docked: ${G.dockedMembers.length}` +
+    buildLevelBreakdown();
+  document.getElementById('over-score').textContent = 'FINAL SCORE: ' + G.score;
+  showLayer('over');
+}
+
+function buildLevelBreakdown() {
+  if (!G.levelStats.length) return '';
+  let html = '<div style="margin-top:12px;font-size:10px;letter-spacing:.1em;color:#4af;">LEVEL BREAKDOWN</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px 12px;margin-top:6px;font-size:11px;text-align:left;">';
+  G.levelStats.forEach(s => {
+    const col = LEVELS[s.level]?.color || '#aaa';
+    html += `<div style="color:${col};">${s.level+1}. ${s.name} <span style="color:#8ab;">${s.acc}% acc, ${s.docked} docked</span></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function accStr() {
+  return G.totalShots > 0 ? Math.round(G.totalHits / G.totalShots * 100) + '%' : '—';
+}
+
+function resume() {
+  PAUSED = false;
+  hideAllLayers();
+  if (!RAF) RAF = requestAnimationFrame(loop);
+}
+
+function restartLevel() {
+  PAUSED = false;
+  hideAllLayers();
+  beginLevel();
+}
+
+function toMenu() {
+  stopLoop();
+  PAUSED = false;
+  document.getElementById('hud').style.display       = 'none';
+  document.getElementById('bot-bar').style.display   = 'none';
+  document.getElementById('upg-strip').style.display = 'none';
+  showLayer('start');
+}
+
+function fullRestart() {
+  stopLoop();
+  hideAllLayers();
+  startGame();
+}
+
+function stopLoop() {
+  ACTIVE = false;
+  if (RAF) { cancelAnimationFrame(RAF); RAF = null; }
+}
+
+// ══════════════════════════════════════════
+// INPUT
+// ══════════════════════════════════════════
+window.addEventListener('keydown', e => {
+  if (!G) return;
+  if (!G.keys) G.keys = {};
+  G.keys[e.code] = true;
+  if (['Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault();
+  if (e.code === 'Escape') {
+    if (G.phase === 'playing') { PAUSED = true; showLayer('pause'); }
+    else if (PAUSED) resume();
+  }
+  if (e.code === 'KeyN' && G.phase === 'playing') doNuke();
+});
+window.addEventListener('keyup', e => { if (G && G.keys) G.keys[e.code] = false; });
+
+// ══════════════════════════════════════════
+// MAIN LOOP
+// ══════════════════════════════════════════
+function loop() {
+  if (!ACTIVE) return;
+  if (!PAUSED) {
+    update();
+    draw();
+  }
+  RAF = requestAnimationFrame(loop);
+}
+
+// ══════════════════════════════════════════
+// UPDATE
+// ══════════════════════════════════════════
+function update() {
+  if (G.phase !== 'playing') { drawBg(); return; }
+  G.frame++;
+
+  // ── Time Dilation T3 slow debuff countdown ──
+  if (G.slowDebuffTimer > 0) G.slowDebuffTimer--;
+
+  // ── Screen shake countdown ──
+  if (G.shakeTimer > 0) G.shakeTimer--;
+
+  // ── Player movement ──
+  const spd = G.playerSpd;
+  if (G.keys['ArrowLeft']  || G.keys['KeyA']) G.px = Math.max(G.pw/2 + 6, G.px - spd);
+  if (G.keys['ArrowRight'] || G.keys['KeyD']) G.px = Math.min(W - G.pw/2 - 6, G.px + spd);
+
+  // ── Shoot ──
+  if (G.keys['Space']) doShoot();
+  if (G.bulletCD > 0) G.bulletCD--;
+
+  // ── Spawn ramp ──
+  G.spawnTimer--;
+  if (G.spawnTimer <= 0) {
+    spawnMember();
+    const decay = Math.floor(G.frame / 420) * 4;
+    G.spawnInterval = Math.max(G.D.spawnFloor, G.D.spawnBase - G.lvl * 9 - decay);
+    G.spawnTimer = G.spawnInterval;
+  }
+
+  // ── Global speed ramp inside level ──
+  if (G.frame % 480 === 0) G.globalSpdMult = Math.min(2.6, G.globalSpdMult + 0.08);
+
+  // ── Move bullets ──
+  for (let i = G.bullets.length - 1; i >= 0; i--) {
+    const b = G.bullets[i];
+    b.x += b.vx; b.y += b.vy;
+    if (b.y < -20) { G.bullets.splice(i, 1); continue; }
+    if (b.pierce !== undefined) { /* keep */ }
+  }
+
+  // ── Move members ──
+  const slowDebuffMult = G.slowDebuffTimer > 0 ? 0.70 : 1.0; // T3: 30% slow for 2s
+  const baseSpd = G.D.spd * G.globalSpdMult * G.globalSlowMult * slowDebuffMult * (1 + G.lvl * 0.17);
+  for (let i = G.members.length - 1; i >= 0; i--) {
+    const m = G.members[i];
+    m.y += m.speed;
+    if (G.lvl >= 3) m.x = clamp(m.x + m.drift, m.w/2 + 4, W - m.w/2 - 4);
+    if (m.flash > 0) m.flash--;
+
+    // ── Bullet collisions ──
+    for (let j = G.bullets.length - 1; j >= 0; j--) {
+      const b = G.bullets[j];
+      if (Math.abs(b.x - m.x) < m.w/2 + 4 && Math.abs(b.y - m.y) < m.h/2 + 4) {
+        G.totalShots++;
+        G.lvlShots++;
+        if (m.isImposter) {
+          // Correct: shot a red imposter
+          G.totalHits++;
+          G.lvlHits++;
+          const pts = 100 + G.lvl * 18;
+          G.score += pts;
+          G.kills++;
+          burst(m.x, m.y, '#00ff9d', 14);
+          pop(m.x, m.y - 22, '+' + pts, '#00ff9d');
+          triggerSlowDebuff();
+          if (G.upg.pierce >= 1 && b.pierceLeft > 0) {
+            b.pierceLeft--;
+            m.alive = false;
+          } else {
+            b.alive = false;
+            m.alive = false;
+          }
+        } else {
+          // Shot own member - lose points, no life loss
+          b.alive = false;
+          m.alive = false;
+          const penalty = 50;
+          G.score = Math.max(0, G.score - penalty);
+          burst(m.x, m.y, '#ff8c00', 8);
+          pop(m.x, m.y - 22, '-' + penalty + ' OWN MEMBER!', '#ff8c00');
+          flash('#ff880022', 200);
+          toast('That was your own class member!', 1400);
+        }
+      }
+    }
+
+    // ── Reached player ──
+    if (!m.alive) { G.members.splice(i, 1); continue; }
+    if (m.y + m.h/2 >= G.py - G.ph/2) {
+      if (Math.abs(m.x - G.px) < m.w/2 + G.pw/2 - 18) {
+        m.alive = false;
+        if (m.isImposter) {
+          // Red imposter reached player - lose life
+          doLoseLife('IMPOSTER REACHED YOU', '#ff8c00');
+          doShake(6, 18);
+          if (G.upg.bomb >= 1) killNearbyImposters(m.x, m.y, 180);
+        } else {
+          // Own member docked with player - bonus
+          const pts = 60;
+          G.score += pts;
+          G.lvlDocked++;
+          G.dockedMembers.push(m.label);
+          burst(m.x, G.py - G.ph/2, LEVELS[G.lvl].color, 8);
+          pop(m.x, G.py - G.ph/2 - 24, '+' + pts + ' DOCKED', LEVELS[G.lvl].color);
+        }
+      }
+    }
+
+    // ── Escaped bottom ──
+    if (!m.alive) { G.members.splice(i, 1); continue; }
+    if (m.y - m.h/2 > H + 30) {
+      m.alive = false;
+      if (m.isImposter) {
+        // Red imposter escaped - lose points (not a life)
+        const penalty = 80;
+        G.score = Math.max(0, G.score - penalty);
+        flash('#ff000022', 200);
+        pop(m.x, H - 70, '-' + penalty + ' ESCAPED!', '#ff2244');
+        toast('Imposter escaped! -' + penalty + ' pts', 1600);
+      } else {
+        // Own member escaped - no penalty (or auto-dock with magnet)
+        if (G.upg.magnet >= 1) {
+          G.score += 20;
+          G.lvlDocked++;
+          G.dockedMembers.push(m.label);
+          pop(W/2, H - 70, 'AUTO-DOCKED +20', LEVELS[G.lvl].color);
+        }
+        // else: blue box passes freely, no penalty
+      }
+    }
+
+    if (!m.alive) G.members.splice(i, 1);
+  }
+
+  // Remove dead bullets
+  G.bullets = G.bullets.filter(b => b.alive !== false);
+
+  // ── Particles ──
+  for (let i = G.particles.length - 1; i >= 0; i--) {
+    const p = G.particles[i];
+    p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+    if (!p.isText) { p.vx *= 0.92; p.vy *= 0.92; }
+    if (p.life <= 0) G.particles.splice(i, 1);
+  }
+
+  // ── Level complete check ──
+  // Trigger as soon as kill quota is hit - don't wait for screen to clear
+  // (blue bonus boxes would prevent members.length ever reaching 0)
+  if (G.kills >= G.killsNeeded && G.phase === 'playing') {
+    G.phase = 'upgrade_pending';
+    setTimeout(() => {
+      if (G.phase === 'upgrade_pending') levelDone();
+    }, 400);
+  }
+
+  updateHUD();
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function doLoseLife(msg, col) {
+  if (G.lives <= 0) return;
+  G.lives--;
+  flash(col + '44', 280);
+  pop(G.px, G.py - 90, msg, col);
+  updateHUD();
+  if (G.lives <= 0) setTimeout(() => gameOver(), 500);
+}
+
+function killNearbyImposters(cx, cy, r) {
+  G.members.forEach(m => {
+    if (!m.alive || !m.isImposter) return;
+    const d = Math.hypot(m.x - cx, m.y - cy);
+    if (d < r) {
+      m.alive = false;
+      G.kills++; G.score += 60; G.totalHits++;
+      burst(m.x, m.y, '#ff8c00', 10);
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// WEAPONS
+// ══════════════════════════════════════════
+function doShoot() {
+  if (G.bulletCD > 0) return;
+  const cc = LEVELS[G.lvl].color;
+  const bx = G.px, by = G.py - G.ph/2;
+  const pierceLeft = G.upg.pierce >= 1 ? 1 : 0;
+
+  if (G.upg.spread >= 1) {
+    [-30,-15,0,15,30].forEach((a, i) => {
+      const rad = a * Math.PI / 180;
+      G.bullets.push({ x:bx, y:by, vx:Math.sin(rad)*11, vy:-Math.cos(rad)*11, alive:true, color:cc, pierceLeft });
+    });
+  } else if (G.upg.multi >= 1) {
+    [-16, 0, 16].forEach(ox => {
+      G.bullets.push({ x:bx+ox, y:by, vx:ox*0.04, vy:-13, alive:true, color:cc, pierceLeft });
+    });
+  } else {
+    G.bullets.push({ x:bx, y:by, vx:0, vy:-14, alive:true, color:cc, pierceLeft });
+  }
+  G.bulletCD = G.bulletCDBase;
+}
+
+function doNuke() {
+  if (G.nukeCharges <= 0 || G.phase !== 'playing') return;
+  G.nukeCharges--;
+  let killed = 0;
+  G.members.forEach(m => {
+    if (!m.alive || !m.isImposter) return;
+    m.alive = false; killed++; G.kills++; G.totalHits++; G.totalShots++;
+    G.lvlHits++; G.lvlShots++;
+    G.score += 80 + G.lvl * 14;
+    burst(m.x, m.y, LEVELS[G.lvl].color, 16);
+  });
+  flash('#00d4ff22', 350);
+  toast(`☢ SCHEMA NUKE - ${killed} eliminated`, 1600);
+  updateHUD();
+}
+
+function triggerSlowDebuff() {
+  if (G.upg.slow >= 3) G.slowDebuffTimer = 120; // 2 seconds at 60fps
+}
+
+function doShake(intensity, duration) {
+  G.shakeIntensity = intensity;
+  G.shakeTimer = duration;
+}
+
+// ══════════════════════════════════════════
+// SPAWNING
+// ══════════════════════════════════════════
+function spawnMember() {
+  const LD = LEVELS[G.lvl];
+  const isOwn = Math.random() < 0.45;
+  let label;
+  if (isOwn) {
+    label = LD.own[Math.floor(Math.random() * LD.own.length)];
+  } else {
+    label = LD.bad[Math.floor(Math.random() * LD.bad.length)];
+  }
+
+  CX.font = '14px "Share Tech Mono",monospace';
+  const tw = CX.measureText(label).width + 28;
+  const th = 34;
+  const spd = G.D.spd * G.globalSpdMult * G.globalSlowMult * (1 + G.lvl * 0.17)
+              * (1 + G.frame / 700 * 0.1);
+  const margin = tw/2 + 10;
+
+  // Prevent overlapping: try up to 5 positions
+  let x, overlap;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    x = margin + Math.random() * (W - margin * 2);
+    overlap = G.members.some(m => m.alive && m.y < 40 && Math.abs(m.x - x) < (m.w + tw) / 2 + 8);
+    if (!overlap) break;
+  }
+
+  G.members.push({
+    x, y: -th/2 - 16,
+    w: tw, h: th,
+    label,
+    isImposter: !isOwn,
+    isBonus: isOwn,
+    speed: spd,
+    alive: true,
+    flash: 0,
+    drift: G.lvl >= 2 ? (Math.random() - 0.5) * 0.5 : 0,
+    pierceLeft: G.upg.pierce >= 1 ? 1 : 0,
+  });
+}
+
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+function burst(x, y, col, n) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = 1.5 + Math.random() * 4;
+    G.particles.push({ x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s, life:1, decay:.024+Math.random()*.02, size:2+Math.random()*4, col, isText:false });
+  }
+}
+function pop(x, y, text, col) {
+  G.particles.push({ x, y, vx:0, vy:-1.1, life:1, decay:.016, text, col, size:13, isText:true });
+}
+
+// ══════════════════════════════════════════
+// DRAW
+// ══════════════════════════════════════════
+const STARS = Array.from({length:130}, () => ({
+  x: Math.random(), y: Math.random(),
+  r: Math.random() * .9 + .2,
+  spd: Math.random() * .3 + .08,
+  ph: Math.random() * Math.PI * 2,
+}));
+
+function drawBg() {
+  const themeIdx = G ? Math.min(G.lvl, LEVEL_THEMES.length - 1) : 0;
+  const theme = LEVEL_THEMES[themeIdx];
+  CX.fillStyle = theme.bg;
+  CX.fillRect(0, 0, W, H);
+  STARS.forEach(s => {
+    s.y += s.spd * 0.00025; if (s.y > 1) s.y = 0;
+    const alpha = 0.15 + Math.sin(Date.now() * .0008 + s.ph) * 0.08;
+    CX.fillStyle = `rgba(${theme.star},${alpha})`;
+    CX.beginPath(); CX.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2); CX.fill();
+  });
+  CX.strokeStyle = theme.grid; CX.lineWidth = .5;
+  for (let x = 0; x < W; x += 40) { CX.beginPath(); CX.moveTo(x,0); CX.lineTo(x,H); CX.stroke(); }
+  for (let y = 0; y < H; y += 40) { CX.beginPath(); CX.moveTo(0,y); CX.lineTo(W,y); CX.stroke(); }
+}
+
+function draw() {
+  drawBg();
+  if (!G || G.phase === 'idle') return;
+
+  // Screen shake offset
+  let sx = 0, sy = 0;
+  if (G.shakeTimer > 0) {
+    sx = (Math.random() - 0.5) * G.shakeIntensity * 2;
+    sy = (Math.random() - 0.5) * G.shakeIntensity * 2;
+    CX.save();
+    CX.translate(sx, sy);
+  }
+
+  const LD = LEVELS[Math.min(G.lvl, LEVELS.length-1)];
+  const cc = LD.color;
+
+  // ── Laser Sight (passive targeting line) ──
+  if (G.upg.laser >= 1) {
+    const px = G.px;
+    const t = Date.now() / 1000;
+    CX.save();
+    CX.strokeStyle = '#f44';
+    CX.lineWidth = 1.5;
+    CX.shadowColor = '#f44'; CX.shadowBlur = 8;
+    CX.globalAlpha = 0.4 + Math.sin(t * 6) * 0.12;
+    CX.beginPath();
+    CX.moveTo(px, G.py - G.ph/2 - 10);
+    CX.lineTo(px, 52);
+    CX.stroke();
+    CX.shadowBlur = 0;
+    // Dot at top
+    CX.globalAlpha = 0.8;
+    CX.fillStyle = '#f44';
+    CX.beginPath(); CX.arc(px, 52, 3, 0, Math.PI * 2); CX.fill();
+    CX.restore();
+  }
+
+  // ── Members (red = imposter, blue = own) ──
+  G.members.forEach(m => {
+    if (!m.alive) return;
+    const bx = m.x - m.w/2, by = m.y - m.h/2;
+
+    let col, bgFill;
+    if (m.isImposter) {
+      col = '#ff2244';
+      bgFill = 'rgba(30,3,9,.93)';
+    } else {
+      col = '#00d4ff';
+      bgFill = 'rgba(0,18,38,.93)';
+    }
+
+    CX.shadowColor = col; CX.shadowBlur = m.flash > 0 ? 22 : 8;
+    CX.fillStyle = bgFill;
+    CX.strokeStyle = col; CX.lineWidth = m.flash > 0 ? 2.5 : 1.4;
+    rr(bx, by, m.w, m.h, 5); CX.fill(); CX.stroke();
+    CX.shadowBlur = 0;
+
+    // Imposter warning stripes + skull
+    if (m.isImposter) {
+      CX.save();
+      CX.beginPath(); rr(bx, by, m.w, m.h, 5); CX.clip();
+      CX.fillStyle = 'rgba(255,34,68,.06)';
+      for (let xi = -m.h; xi < m.w + m.h; xi += 10) CX.fillRect(bx+xi, by, 5, m.h);
+      CX.restore();
+      CX.fillStyle = '#ff2244'; CX.font = '11px monospace';
+      CX.textAlign = 'left'; CX.textBaseline = 'middle';
+      CX.fillText('☠', bx + 5, m.y);
+    } else {
+      CX.fillStyle = '#00d4ff'; CX.font = '11px monospace';
+      CX.textAlign = 'left'; CX.textBaseline = 'middle';
+      CX.fillText('★', bx + 5, m.y);
+    }
+
+    CX.font = (m.isImposter ? 'bold ' : '') + '14px "Share Tech Mono",monospace';
+    CX.fillStyle = m.isImposter ? '#ff6677' : '#55eeff';
+    CX.textAlign = 'center'; CX.textBaseline = 'middle';
+    CX.fillText(m.label, m.x, m.y);
+  });
+
+  // ── Bullets ──
+  G.bullets.forEach(b => {
+    CX.shadowColor = b.color; CX.shadowBlur = 14;
+    CX.fillStyle = b.color;
+    CX.beginPath(); CX.ellipse(b.x, b.y, 3, 9, 0, 0, Math.PI*2); CX.fill();
+    CX.fillStyle = b.color + '55';
+    CX.beginPath(); CX.ellipse(b.x, b.y + 13, 2, 6, 0, 0, Math.PI*2); CX.fill();
+    CX.shadowBlur = 0;
+  });
+
+  // ── Player ──
+  drawPlayer(cc, LD);
+
+  // ── Reference Panel ──
+  drawRefPanel(LD, cc);
+
+  // ── Shield ring ──
+  if (G.shieldHP > 0) {
+    CX.strokeStyle = 'rgba(0,212,255,.35)'; CX.lineWidth = 2;
+    CX.shadowColor = '#00d4ff'; CX.shadowBlur = 14;
+    CX.beginPath();
+    CX.ellipse(G.px, G.py, G.pw/2 + 22, G.ph/2 + 22, 0, 0, Math.PI*2);
+    CX.stroke(); CX.shadowBlur = 0;
+    // Shield charge count
+    CX.font = 'bold 11px "Share Tech Mono",monospace';
+    CX.fillStyle = '#00d4ff';
+    CX.textAlign = 'center';
+    CX.fillText('🛡 x' + G.shieldHP, G.px, G.py + G.ph/2 + 36);
+  }
+
+  // ── Slow debuff indicator ──
+  if (G.slowDebuffTimer > 0) {
+    CX.font = '10px "Share Tech Mono",monospace';
+    CX.fillStyle = '#aaf';
+    CX.textAlign = 'center';
+    CX.fillText('⏳ SLOW FIELD ACTIVE', W/2, 50);
+  }
+
+  // ── Particles ──
+  G.particles.forEach(p => {
+    CX.globalAlpha = Math.max(0, p.life);
+    if (p.isText) {
+      CX.font = `bold ${p.size}px "Share Tech Mono",monospace`;
+      CX.fillStyle = p.col; CX.shadowColor = p.col; CX.shadowBlur = 8;
+      CX.textAlign = 'center'; CX.textBaseline = 'middle';
+      CX.fillText(p.text, p.x, p.y); CX.shadowBlur = 0;
+    } else {
+      CX.fillStyle = p.col; CX.shadowColor = p.col; CX.shadowBlur = 5;
+      CX.beginPath(); CX.arc(p.x, p.y, p.size, 0, Math.PI*2); CX.fill(); CX.shadowBlur = 0;
+    }
+    CX.globalAlpha = 1;
+  });
+
+  // scanlines
+  CX.fillStyle = 'rgba(0,0,0,.055)';
+  for (let y = 54; y < H - 40; y += 3) CX.fillRect(0, y, W, 1);
+
+  // End screen shake
+  if (G.shakeTimer > 0) CX.restore();
+}
+
+function drawPlayer(cc, LD) {
+  const x = G.px - G.pw/2, y = G.py - G.ph/2;
+  const t = G.frame * .022;
+
+  CX.shadowColor = cc; CX.shadowBlur = 16 + Math.sin(t) * 4;
+  CX.fillStyle = '#03091a'; CX.strokeStyle = cc; CX.lineWidth = 2;
+  rr(x, y, G.pw, G.ph, 7); CX.fill(); CX.stroke();
+  CX.shadowBlur = 0;
+
+  // header
+  const hh = 26;
+  CX.fillStyle = cc + '1a'; rr(x, y, G.pw, hh, [7,7,0,0]); CX.fill();
+  CX.strokeStyle = cc + '40'; CX.lineWidth = 1;
+  CX.beginPath(); CX.moveTo(x+5, y+hh); CX.lineTo(x+G.pw-5, y+hh); CX.stroke();
+
+  if (LD.stereo) {
+    CX.fillStyle = cc + '66'; CX.font = '8px "Share Tech Mono",monospace';
+    CX.textAlign = 'center'; CX.textBaseline = 'top';
+    CX.fillText(LD.stereo, G.px, y + 3);
+  }
+  CX.fillStyle = cc; CX.shadowColor = cc; CX.shadowBlur = 8;
+  CX.font = 'bold 13px "Orbitron",monospace'; CX.textAlign = 'center'; CX.textBaseline = 'middle';
+  CX.fillText(LD.name, G.px, y + (LD.stereo ? 20 : 13));
+  CX.shadowBlur = 0;
+
+  const rows = LD.own.slice(0, 3);
+  const rh = (G.ph - hh - 10) / 4;
+  CX.font = '9px "Share Tech Mono",monospace'; CX.fillStyle = cc + '88'; CX.textAlign = 'left'; CX.textBaseline = 'middle';
+  rows.forEach((m, i) => CX.fillText(m, x + 8, y + hh + 8 + i * rh));
+  if (LD.own.length > 3) { CX.fillStyle = cc + '33'; CX.fillText(`+${LD.own.length-3} more…`, x+8, y+hh+8+3*rh); }
+
+  // barrel
+  CX.fillStyle = cc; CX.shadowColor = cc; CX.shadowBlur = 10;
+  CX.fillRect(G.px - 3, y - 14, 6, 16);
+  if (G.bulletCD > G.bulletCDBase - 3) {
+    CX.fillStyle = '#fff'; CX.beginPath(); CX.arc(G.px, y - 14, 4, 0, Math.PI*2); CX.fill();
+  }
+  CX.shadowBlur = 0;
+
+  // thrusters
+  [G.px - G.pw*.28, G.px + G.pw*.28].forEach(tx => {
+    CX.shadowColor = cc + '88'; CX.shadowBlur = 12;
+    const fl = 3 + Math.random() * 4;
+    CX.fillStyle = cc + '33'; CX.beginPath(); CX.ellipse(tx, y+G.ph+4, 7, fl, 0, 0, Math.PI*2); CX.fill();
+    CX.fillStyle = cc + '77'; CX.beginPath(); CX.ellipse(tx, y+G.ph+1, 4, 3, 0, 0, Math.PI*2); CX.fill();
+    CX.shadowBlur = 0;
+  });
+
+  // nuke hint
+  if (G.nukeCharges > 0) {
+    CX.fillStyle = '#ff5500'; CX.font = '9px "Share Tech Mono",monospace';
+    CX.textAlign = 'center';
+    CX.fillText(`☢×${G.nukeCharges} [N]`, G.px, y + G.ph + 20);
+  }
+}
+
+// Reference panel fading: L1-3 full, L4-5 attrs only, L6-7 name only, L8 none
+function getRefMode() {
+  if (G.lvl <= 2) return 'full';
+  if (G.lvl <= 4) return 'attrs';
+  if (G.lvl <= 6) return 'name';
+  return 'none';
+}
+
+function drawRefPanel(LD, cc) {
+  const mode = getRefMode();
+  if (mode === 'none') return;
+
+  const panelW = 170, lineH = 16, px = 10, py = 62;
+  const attrs = LD.own.filter(m => m.startsWith('-'));
+  const methods = LD.own.filter(m => m.startsWith('+'));
+  const headerH = LD.stereo ? 36 : 24;
+
+  let panelH;
+  if (mode === 'full') panelH = headerH + attrs.length * lineH + 6 + methods.length * lineH + 10;
+  else if (mode === 'attrs') panelH = headerH + attrs.length * lineH + 10;
+  else panelH = headerH + 8;
+
+  let opacity = 1.0;
+  if (G.lvl === 2 || G.lvl === 4 || G.lvl === 6) opacity = 0.5;
+
+  CX.globalAlpha = opacity * 0.82;
+  CX.fillStyle = '#060e1a'; CX.strokeStyle = cc + '44'; CX.lineWidth = 1;
+  rr(px, py, panelW, panelH, 5); CX.fill(); CX.stroke();
+  CX.fillStyle = cc + '10'; rr(px, py, panelW, headerH, [5,5,0,0]); CX.fill();
+
+  let nameY = py + 14;
+  if (LD.stereo) {
+    CX.font = '8px "Share Tech Mono",monospace'; CX.fillStyle = cc + '77';
+    CX.textAlign = 'center'; CX.fillText(LD.stereo, px + panelW/2, py + 11);
+    nameY = py + 24;
+  }
+  CX.font = 'bold 11px "Orbitron",monospace'; CX.fillStyle = cc;
+  CX.textAlign = 'center'; CX.fillText(LD.name, px + panelW/2, nameY);
+
+  if (mode === 'attrs' || mode === 'full') {
+    CX.strokeStyle = cc + '33'; CX.lineWidth = 1;
+    CX.beginPath(); CX.moveTo(px+4, py+headerH); CX.lineTo(px+panelW-4, py+headerH); CX.stroke();
+    CX.font = '9px "Share Tech Mono",monospace'; CX.fillStyle = cc + 'aa'; CX.textAlign = 'left';
+    attrs.forEach((a, i) => CX.fillText(a, px + 6, py + headerH + 12 + i * lineH));
+  }
+
+  if (mode === 'full') {
+    const d2Y = headerH + attrs.length * lineH + 6;
+    CX.strokeStyle = cc + '33'; CX.lineWidth = 1;
+    CX.beginPath(); CX.moveTo(px+4, py+d2Y); CX.lineTo(px+panelW-4, py+d2Y); CX.stroke();
+    CX.fillStyle = cc + 'aa'; CX.textAlign = 'left';
+    methods.forEach((m, i) => CX.fillText(m, px + 6, py + d2Y + 12 + i * lineH));
+  }
+
+  CX.font = '7px "Share Tech Mono",monospace'; CX.fillStyle = cc + '44'; CX.textAlign = 'center';
+  const lbl = mode === 'full' ? 'CLASS REFERENCE' : mode === 'attrs' ? 'ATTRIBUTES ONLY' : 'CLASS NAME ONLY';
+  CX.fillText('◈ ' + lbl, px + panelW/2, py - 4);
+  CX.globalAlpha = 1;
+}
+
+function rr(x, y, w, h, r) {
+  const ra = typeof r === 'number' ? [r,r,r,r] : r;
+  CX.beginPath();
+  CX.moveTo(x+ra[0], y);
+  CX.lineTo(x+w-ra[1], y); CX.quadraticCurveTo(x+w, y, x+w, y+ra[1]);
+  CX.lineTo(x+w, y+h-ra[2]); CX.quadraticCurveTo(x+w, y+h, x+w-ra[2], y+h);
+  CX.lineTo(x+ra[3], y+h); CX.quadraticCurveTo(x, y+h, x, y+h-ra[3]);
+  CX.lineTo(x, y+ra[0]); CX.quadraticCurveTo(x, y, x+ra[0], y);
+  CX.closePath();
+}
+
+// ══════════════════════════════════════════
+// HUD
+// ══════════════════════════════════════════
+function updateHUD() {
+  if (!G) return;
+  const LD = LEVELS[Math.min(G.lvl, LEVELS.length-1)];
+  document.getElementById('h-lv').textContent  = G.lvl + 1;
+  document.getElementById('h-cls').textContent = LD.name;
+  document.getElementById('h-sc').textContent  = G.score;
+  const spdDisp = (G.D.spd * G.globalSpdMult * G.globalSlowMult * (1+G.lvl*.17)).toFixed(1);
+  document.getElementById('h-spd').textContent = spdDisp + '×';
+
+  // weapon
+  let wico = '◈', wname = 'PULSE';
+  if (G.upg.spread >= 1) { wico = '╳'; wname = 'SPREAD'; }
+  else if (G.upg.multi  >= 1) { wico = '⋈'; wname = 'MULTI'; }
+  if (G.upg.pierce >= 1) wname += '+PIERCE';
+  if (G.upg.laser >= 1) wname += '+SIGHT';
+  document.getElementById('h-wico').textContent  = wico;
+  document.getElementById('h-wname').textContent = wname;
+  document.getElementById('h-ammo').textContent  = G.nukeCharges > 0 ? `☢×${G.nukeCharges}` : '';
+
+  // hearts
+  const hv = document.getElementById('h-hearts');
+  hv.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const s = document.createElement('span');
+    s.className = 'heart' + (i >= G.lives ? ' off' : '');
+    s.textContent = '♥'; hv.appendChild(s);
+  }
+
+  // bottom bar
+  document.getElementById('b-kills').textContent = `${G.kills}/${G.killsNeeded}`;
+  const pct = G.killsNeeded > 0 ? Math.min(100, Math.round(G.kills/G.killsNeeded*100)) : 0;
+  document.getElementById('b-pbar').style.width = pct + '%';
+  document.getElementById('b-acc').textContent  = accStr();
+  const nb = document.getElementById('b-nuke');
+  nb.style.display = G.nukeCharges > 0 ? '' : 'none';
+  if (G.nukeCharges > 0) nb.textContent = `☢×${G.nukeCharges} NUKE [N]`;
+
+  // upgrade strip
+  const strip = document.getElementById('upg-strip');
+  strip.innerHTML = '';
+  UPG_DEFS.forEach(u => {
+    if (G.upg[u.id] > 0) {
+      const d = document.createElement('div');
+      d.className = 'upg-icon-el';
+      d.textContent = u.icon + (G.upg[u.id]>1 ? G.upg[u.id] : '');
+      d.title = u.name + ' L' + G.upg[u.id];
+      strip.appendChild(d);
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// UPGRADE SCREEN
+// ══════════════════════════════════════════
+function showUpgradeScreen() {
+  const stat = G.levelStats[G.levelStats.length - 1];
+  const LD = LEVELS[G.lvl];
+  let summary = `LEVEL ${G.lvl+1} COMPLETE - ${LD.name}`;
+  if (stat) summary += ` | ${stat.acc}% accuracy | ${stat.docked} docked`;
+  document.getElementById('upg-sub').textContent = summary;
+  buildUpgGrid();
+  showLayer('upgrade');
+}
+
+function buildUpgGrid() {
+  const grid = document.getElementById('upg-grid');
+  grid.innerHTML = '';
+  // Filter out maxed upgrades, then pick up to 6
+  const available = UPG_DEFS.filter(u => G.upg[u.id] < u.max);
+  const shuffled = available.sort(() => Math.random() - .5);
+  const chosen = shuffled.slice(0, 6);
+  if (chosen.length === 0) {
+    grid.innerHTML = '<div style="color:#4af;font-size:12px;padding:20px;">All upgrades maxed! Click SKIP to continue.</div>';
+    return;
+  }
+  chosen.forEach(u => {
+    const cur = G.upg[u.id];
+    const card = document.createElement('div');
+    card.className = 'upg-card';
+    card.innerHTML = `
+      <span class="uc-icon">${u.icon}</span>
+      <div class="uc-name">${u.name}${cur>0?` <span style="color:#00d4ff;font-size:13px;font-weight:bold;">Lv${cur} → Lv${cur+1}</span>`:''}</div>
+      <div class="uc-lvl">Tier ${cur+1} / ${u.max}</div>
+      <div class="uc-desc">${u.desc}</div>`;
+    card.addEventListener('click', () => applyUpgrade(u.id));
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════
+// FLASH / TOAST
+// ══════════════════════════════════════════
+function flash(col, dur) {
+  const f = document.getElementById('flash');
+  f.style.background = col; f.style.opacity = '1';
+  setTimeout(() => f.style.opacity = '0', dur);
+}
+let toastTO;
+function toast(msg, dur=1800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(toastTO);
+  toastTO = setTimeout(() => t.style.opacity = '0', dur);
+}
+
+// ══════════════════════════════════════════
+// BOOT - animated background on start screen
+// ══════════════════════════════════════════
+(function bootAnim() {
+  if (ACTIVE) return;
+  drawBg();
+  requestAnimationFrame(bootAnim);
+})();
+</script>
+</body>
+</html>
