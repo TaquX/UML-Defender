@@ -314,7 +314,8 @@ canvas { position:fixed; top:0; left:0; z-index:0; }
       <div class="sep"></div>
       <span class="sec-lbl">CALLSIGN</span>
       <input id="player-name" type="text" maxlength="24" placeholder="Enter your name"
-        style="width:100%;padding:8px;margin:6px 0 10px;background:#04101e;border:1px solid var(--border);color:var(--acc);font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.05em;border-radius:4px;">
+        style="width:100%;padding:8px;margin:6px 0 4px;background:#04101e;border:1px solid var(--border);color:var(--acc);font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.05em;border-radius:4px;">
+      <div id="name-error" style="display:none;color:var(--red);font-size:10px;letter-spacing:.1em;margin-bottom:6px;">⚠ ENTER A CALLSIGN TO CONTINUE</div>
       <div class="sep"></div>
       <button class="btn primary" onclick="startGame()">▶  INITIALIZE SYSTEM</button>
       <button class="btn" onclick="showLayer('howto')">?  HOW TO PLAY</button>
@@ -973,7 +974,19 @@ function getLevelData() {
 // ══════════════════════════════════════════
 function startGame() {
   const nameInput = document.getElementById('player-name');
-  PLAYER_NAME = (nameInput && nameInput.value.trim()) || 'anon';
+  const errEl = document.getElementById('name-error');
+  const name = (nameInput && nameInput.value.trim()) || '';
+  if (!name) {
+    if (errEl) errEl.style.display = 'block';
+    if (nameInput) {
+      nameInput.style.borderColor = 'var(--red)';
+      nameInput.focus();
+    }
+    return;
+  }
+  if (errEl) errEl.style.display = 'none';
+  if (nameInput) nameInput.style.borderColor = 'var(--border)';
+  PLAYER_NAME = name;
   SESSION_ID = 's-' + PLAYER_NAME.replace(/\s+/g,'_') + '-' + Date.now();
   logEvent('session_start', { difficulty: DIFF_KEY });
   initGame();
